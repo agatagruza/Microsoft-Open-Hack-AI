@@ -1,0 +1,132 @@
+﻿var fileUploader = {
+    chunkLength: 1024*1024,
+    loader: {
+        initialize: function () {
+        },
+        update: function () {
+        },
+        dispose: function () {
+        }
+    },
+    UploadFile:  function (file, filename, success, failure, mimetype) {
+        if (file && (!mimetype || file.type.match(mimetype))) {
+            var reader = new FileReader();
+            reader.onload = function (e2) {
+                var filecontent = e2.target.result;
+                var index = filecontent.indexOf("base64") + 7;
+                fileUploader.loader.initialize();
+                fileUploader.Filetransfer(filecontent.substring(index), filename, 0, success, failure);
+            }
+            reader.readAsDataURL(file);
+        }
+    },
+    Filetransfer: function (filedata, filename, startindex, success, failure) {
+        var dataB64 = filedata.substring(startindex, startindex + fileUploader.chunkLength);
+        fileUploader.UploadBase64Chunk(dataB64, filename, startindex == 0 ? "Create" : "Append", function (data) {
+            fileUploader.loader.update(Math.floor(100 * (startindex + dataB64.length) / filedata.length));
+            if (data == "") {
+                failure();
+            }
+            else {
+                if (startindex + fileUploader.chunkLength < filedata.length) {
+                    fileUploader.Filetransfer(filedata, filename, startindex + fileUploader.chunkLength, success, failure);
+                }
+                else {
+                    success(data);
+                    fileUploader.loader.dispose();
+                }
+            }
+        })
+    },
+    UploadBase64Chunk: function (filedata, filename, operationtype, callback) {
+        var data = {};
+        data.filedata = filedata;
+        data.filename = filename;
+        data.operationtype = operationtype;
+        data.__RequestVerificationToken = $("[name = '__RequestVerificationToken']").val();
+        var url = $.post("/Course/UploadFile", data).done(callback);
+        //url.then(callback);
+    }
+
+}
+
+$("#fileupload-button").on("click", function () {
+    $("#upload-file").trigger("click");
+})
+
+$("#fileupload-button-update").on("click", function () {
+    $("#upload-file-update").trigger("click");
+})
+
+$("#upload-file").on("change", function (e) {
+    var file = e.target.files[0];
+    fileUploader.loader = {
+        initialize: function () {
+            $("#file-loader").css("display", "block").children().first().css("width", "0");
+        },
+        update: function (percentage) {
+            $("#file-loader").children().first().css("width", percentage + "%");
+        },
+        dispose: function () {
+            $("#file-loader").css("display", "none");
+        }
+    }
+    $.get("/Course/GenerateGuid").done(function (guid) {
+        var filename = guid + "-" + file.name.split(" ").join("_")
+        $("#upload-filename").val(filename);
+        fileUploader.UploadFile(file, filename,
+            function (data) {
+                $("#NoteAttachmentArea").append("<div class='row' attachment-item='" + filename + "'><div class='col-md-9'>" + file.name + "</div><div class='col-md-3'><a attachment-remove style='cursor: pointer;'>Remove</a></div></div>");
+                $("#NoteAttachment").removeClass("hide");
+                $("#fileupload-button").attr("disabled", "disabled");
+                $("#fileupload-button").addClass("hide");
+            },
+            function () {
+                alert("error");
+            });
+    });
+})
+
+$("#upload-file-update").on("change", function (e) {
+    var file = e.target.files[0];
+    fileUploader.loader = {
+        initialize: function () {
+            $("#file-loader-update").css("display", "block").children().first().css("width", "0");
+        },
+        update: function (percentage) {
+            $("#file-loader-update").children().first().css("width", percentage + "%");
+        },
+        dispose: function () {
+            $("#file-loader-update").css("display", "none");
+        }
+    }
+    $.get("/Course/GenerateGuid").done(function (guid) {
+        var filename = guid + "-" + file.name.split(" ").join("_")
+        $("#upload-filename-update").val(filename);
+        fileUploader.UploadFile(file, filename,
+            function (data) {
+                $("#UpdateNoteAttachmentArea").append("<div class='row' attachment-item='" + filename + "'><div class='col-md-9'>" + file.name + "</div><div class='col-md-3'><a attachment-remove style='cursor: pointer;'>Remove</a></div></div>");
+                $("#UpdateNoteAttachment").removeClass("hide");
+                $("#fileupload-button-update").attr("disabled", "disabled");
+                $("#fileupload-button-update").addClass("hide");
+            },
+            function () {
+                alert("error");
+            });
+    });
+})
+
+$("body").on("click", "[attachment-remove]", function () {
+    var area = $(this).closest("#NoteAttachment");
+    var button = $("#fileupload-button");
+    if (area.length == 0) {
+        area = $(this).closest("#UpdateNoteAttachment");
+        button = $("#fileupload-button-update");
+    }
+    $(this).closest("[attachment-item]").remove();
+    if ($("[attachment-item]", $(area)).length == 0) {
+        $(area).addClass("hide");
+        $(button).removeAttr("disabled");
+        $(button).removeClass("hide");
+    }
+})

@@ -1,0 +1,1477 @@
+﻿/// <reference path="D:\Projects\OPSGILITY LATEST\OTA\opsgility.OTA\opsgility.OTA.Labs\Views/Shared/IframeInitialLoad.html" />
+/// <reference path="D:\Projects\OPSGILITY LATEST\OTA\opsgility.OTA\opsgility.OTA.Labs\Views/Shared/IframeInitialLoad.html" />
+var Module = { ModuleAttachment: [] }
+var NextModule = { ModuleAttachment: [] }
+
+var moduleViewModel = {
+    StartRealTimeLabsData: undefined,
+    courseModules: ko.observableArray([]),
+    languageDetails: ko.observableArray(),
+    moduleVideoId: ko.observable(),
+    CurrentModule: ko.observable(Module),
+    moduleVideoPlayer: null,
+    selectedModuleId: ko.observable(),
+    selectedCourseModuleId: ko.observable(),
+    selectedLanguage: ko.observable(),
+    CourseId: ko.observable(),
+    ModuleVideoName: ko.observable(),
+    ModuleRating: ko.observable(),
+    UserActivityLogId: ko.observable(),
+    videoCurrentRunTime: 0,
+    currentCourse: ko.observable(),
+    currentCourseDesc: ko.observable(),
+    labUrl: ko.observable(),
+    CurrentModuleTitle: ko.observable(),
+    CurrentModuleDescription: ko.observable(),
+    PreviousModuleTitle: ko.observable(),
+    NextModuleTitle: ko.observable(),
+    NextModuleItem: ko.observable(NextModule),
+    currentIndex: ko.observable(),
+    IsLabCompleted: ko.observable(),
+    askaQuestionURL: ko.observable(),
+    relatedInformations: ko.observableArray(),
+    LastUpdateDate: ko.observable(),
+    LastUpdateTime: ko.observable(),
+    getDurationCalledFromPause: ko.observable(true),
+    getDurationCalledFromFinish: ko.observable(true),
+    saveUserNote: ko.observable(),
+    userNote: ko.observable(),
+    userNotes: ko.observableArray(),
+    isVisible: ko.observable(true),
+    moduleVideoURL: ko.observable(),
+    instructorName: ko.observable(),
+    instructorCode: ko.observable(),
+    level: ko.observable(),
+    publishedDate: ko.observable(),
+    totalCourseDuration: ko.observable(),
+    totalCourseLabDuration: ko.observable(),
+    ratingValue: ko.observable(),
+    coursePreRequisites: ko.observable(),
+    coursePreRequisitesLen: ko.observable(0),
+    showLab: ko.observable(false),
+    showdefaultView: ko.observable(true),
+    currentCourseDefaultImageUrl: ko.observable(),
+    courseAudience: ko.observable(),
+    courseAudienceLength: ko.observable(0),
+    courseObjectives: ko.observable(),
+    courseObjectivesLength: ko.observable(0),
+    loadLanguages: function () {
+        //Ajax Call Get Language List
+        ajaxRequest.makeAPIRequest("/Module/GetAllLanguages", "GET", {
+        }, function (data) {
+            moduleViewModel.languageDetails(data);
+        });
+    },
+    exercisesInOrder: [],
+    notifications: [],
+
+    nextExerciseAllowed: function () {
+        var exercises = moduleViewModel.getExerciseList();
+        var index = $.inArray(handsOnLabVM.LastAttachment, exercises);
+        if (index < 0) { return false; }
+        if (index == exercises.length - 1) { return false; }
+        if ($.inArray(exercises[index + 1], moduleViewModel.allowedExercises) >= 0) {
+            return true;
+        }
+        return false;
+    },
+
+    getExerciseList: function () {
+        if (moduleViewModel.exercisesInOrder.length == 0) {
+            $.each(moduleViewModel.courseModules(), function () {
+                var attachments = this.Module.ModuleAttachment;
+                for (var i = 0; i < attachments.length; i++) {
+                    if (attachments[i].AttachmentTypeId == 2) {
+                        moduleViewModel.exercisesInOrder.push(attachments[i].Id);
+                    }
+                }
+            });
+        }
+        return moduleViewModel.exercisesInOrder;
+    },
+
+    getAllowedExercises: function (courseId) {
+        var url = "/Course/GetAllowedExercises?courseId=" + courseId + "&classroomId=" + moduleViewModel.classroomId;
+        $.get(url).done(function (data) {
+            moduleViewModel.allowedExercises = $.parseJSON(data);
+            handsOnLabVM.SetNextExerciseAccessibility();
+            $.each($(".module-exercise", $("body")), function () {
+                var id = parseInt($(this).attr("id"));
+                if (moduleViewModel.allowedExercises.indexOf(id) >= 0) {
+                    $(this).removeClass("exercise-disabled");
+                }
+                else {
+                    $(this).addClass("exercise-disabled");
+                }
+            });
+        });
+    },
+
+    allowedExercises: [],
+    isGated: false,
+    gateStatus: undefined,
+    classroomId: undefined,
+    labEndStatus: undefined,
+
+    loadCourseModules: function (courseId, loadVideos) {
+        var elm = $("#allowedExercises");
+        if ($(elm).val().length > 0) {
+            moduleViewModel.allowedExercises = $.parseJSON($(elm).val());
+            $.each($(".module-exercise", $("body")), function () {
+                var id = parseInt($(this).attr("id"));
+                if (moduleViewModel.allowedExercises.indexOf(id) >= 0) {
+                    $(this).removeClass("exercise-disabled");
+                }
+                else {
+                    $(this).addClass("exercise-disabled");
+                }
+            });
+            $(elm).remove();
+        }
+
+        elm = $("#classroomId");
+        moduleViewModel.classroomId = parseInt($(elm).val());
+        $(elm).remove();
+
+        elm = $("#hasGatedExercises");
+        moduleViewModel.isGated = $(elm).val() == "True";
+        $(elm).remove();
+
+        elm = $("#gateStatus");
+        moduleViewModel.gateStatus = {};
+        if ($(elm).val().length > 0) {
+            var list = $.parseJSON($(elm).val());
+            $.each(list, function () {
+                moduleViewModel.gateStatus[this.ClassroomGateRequestId] = { classroomId: this.ClassroomId, exerciseId: this.ExerciseId, requestStatus: this.RequestStatus, notifiedExerciseId: this.NotifiedExerciseId };
+            })
+        }
+        $(elm).remove();
+
+        elm = $("#labEndStatus");
+        moduleViewModel.labEndStatus = {};
+        if ($(elm).val().length > 0) {
+            var list = $.parseJSON($(elm).val());
+            $.each(list, function () {
+                moduleViewModel.labEndStatus[this.ClassroomGateRequestId] = { classroomId: this.ClassroomId, exerciseId: this.ExerciseId, requestStatus: this.RequestStatus };
+            })
+        }
+        $(elm).remove();
+
+        //var selectedSubscription = $.getCookie('CurrentSubscriptionToken');
+        ajaxRequest.makeAPIRequest("/Module/GetCourseId", "GET", { courseCode: courseId }, function (result) {
+            moduleViewModel.CourseId(result);
+            // On Course load, Save activity
+            //moduleViewModel.saveUserActivity(result, null, null, null, null);
+        }, null, null, null, false);
+        ajaxRequest.makeAPIRequest("/Module/GetCourseModulesLabs", "GET", {
+            "courseCode": courseId,
+            "selectedSubscription": null
+            //"selectedSubscription": selectedSubscription
+        }, function (response) {
+            var courseFound = response.m_Item1;
+
+            if (!courseFound) {
+                var baseurl = opsgility.getBaseURL();
+                window.location.href = baseurl + "/Error/NotFound";
+            }
+
+            var data = response.m_Item2;
+            //if (moduleViewModel.isGated == true) {
+            //    moduleViewModel.startGatePolling(data.TrainingMaterialId);
+            //}
+            moduleViewModel.startGatePolling(data.TrainingMaterialId);
+            moduleViewModel.getAllowedExercises(data.TrainingMaterialId);
+            moduleViewModel.IsLabCompleted(true);
+            if (data.StartCourseModule.Module.ModuleFeedback) {
+                moduleViewModel.ratingValue(data.StartCourseModule.Module.ModuleFeedback.RatingValue);
+                $('#rating').raty('score', data.StartCourseModule.Module.ModuleFeedback.RatingValue);
+            }
+            if (data.RelatedInformationList != null) {
+                moduleViewModel.relatedInformations(data.RelatedInformationList);
+            }
+
+            moduleViewModel.instructorName(data.InstructorName);
+            moduleViewModel.instructorCode(data.InstructorCode);
+            moduleViewModel.level(data.Level);
+            moduleViewModel.publishedDate(data.CreatedDateFormate);
+            moduleViewModel.totalCourseDuration(data.TotalCourseDurationString);
+            moduleViewModel.totalCourseLabDuration(data.TotalCourseLabDurationString);
+            moduleViewModel.currentCourse(data.TrainingMaterialName);
+            moduleViewModel.currentCourseDefaultImageUrl(data.DefaultImageUrl);
+            moduleViewModel.currentCourseDesc(data.TrainingMaterialDescription);
+            if (data.PreRequisites != null && data.PreRequisites.length > 0) {
+                moduleViewModel.coursePreRequisitesLen(data.PreRequisites.length);
+                moduleViewModel.coursePreRequisites(data.PreRequisites);
+            }
+            if (data.CourseAudienceList != null && data.CourseAudienceList.length > 0) {
+                moduleViewModel.courseAudienceLength(data.CourseAudienceList.length);
+                moduleViewModel.courseAudience(data.CourseAudienceList);
+            }
+            if (data.CourseObjectivesList != null && data.CourseObjectivesList.length > 0) {
+                moduleViewModel.courseObjectivesLength(data.CourseObjectivesList.length);
+                moduleViewModel.courseObjectives(data.CourseObjectivesList);
+            }
+            moduleViewModel.askaQuestionURL(data.URL);
+            moduleViewModel.labUrl(data.LabUrl);
+            moduleViewModel.courseModules(data.CourseModules);
+
+            var moduleid = $("#autostarthandsonlab").attr("module-id");
+            if (moduleid) {
+                $.each(data.CourseModules, function () {
+                    if (this.ModuleId == moduleid) {
+                        data.StartCourseModule = this;
+                    }
+                });
+            }
+            moduleViewModel.CurrentModule(data.StartCourseModule.Module);
+
+
+            moduleViewModel.CurrentModuleDescription(data.StartCourseModule.Module.TrainingMaterial.Description);
+            moduleViewModel.getCurrentIndex();
+
+            $("a[labmoduleid=" + data.StartCourseModule.ModuleId + "]").closest("div").css('display', 'block');
+            var children = $("a[labmoduleid=" + data.StartCourseModule.ModuleId + "]").closest(".course--module").children()
+            $(children[2]).toggleClass('course--module-expand__rotate')
+            moduleViewModel.selectedModuleId(data.StartCourseModule.Module.TrainingMaterialId);
+            moduleViewModel.selectedCourseModuleId(data.StartCourseModule.CourseModuleId);
+            if (loadVideos) {
+                if (moduleViewModel.CurrentModule().TrainingVideo != null) {
+                    var videoUrl = moduleViewModel.CurrentModule().TrainingVideo.VideoUrl + '&format=smooth';
+                    //var videoUrl = 'http://admotadevmediastorage.streaming.mediaservices.windows.net/970b6b1f-38b5-497f-9402-c36a674c9fdb/Blob_f6669363-1c7b-4214-8a79-4c56972b93c7.ism/Manifest';
+                    moduleViewModel.moduleVideoURL(videoUrl);
+                    if (moduleViewModel.CurrentModule().TrainingVideo.Description != null) {
+                        moduleViewModel.ModuleVideoName(moduleViewModel.CurrentModule().TrainingVideo.Description);
+                    }
+                    else {
+                        moduleViewModel.ModuleVideoName(moduleViewModel.CurrentModule().TrainingVideo.ModuelName);
+                    }
+                }
+                moduleViewModel.playModuleVideo();
+            }
+            moduleViewModel.attachEvent();
+            $(".timeLineEnd").removeClass('hidden');
+            $("#VivaTimelinediv").fadeIn('slow', function () {
+            });
+            moduleViewModel.resetTimelineHeight();
+            //Animate first lab
+            moduleViewModel.animateLab();
+
+            var firstAttachment = data.StartCourseModule.Module.ModuleAttachment[0];
+            moduleViewModel.viewHandsOnLab(firstAttachment.Id, moduleViewModel.CourseId(), data.StartCourseModule.CourseModuleId, firstAttachment.IsLabCompleted);
+            moduleViewModel.getAllowedExercises(data.TrainingMaterialId);
+
+        }, null, null, true, true);
+    },
+
+    startGatePolling: function (courseId) {
+        setTimeout(function () {
+            var changes = [];
+            var url = "/Course/GetClassroomStatus?courseId=" + courseId + "&classroomId=" + moduleViewModel.classroomId;
+            $.get(url).done(function (response) {
+                var data = $.parseJSON(response);
+                if (data && data.Control == "CONTROL") {
+                    var rollbackExerciseId = data.RollbackStatus;
+                    var currentExerciseId = 0;
+                    var currentAttachments = moduleViewModel.CurrentModule().ModuleAttachment;
+                    $.each(currentAttachments, function () {
+                        if (this.AttachmentTypeId == 2) { currentExerciseId = this.Id }
+                    });
+                    if (rollbackExerciseId != 0) { // && rollbackExerciseId != currentExerciseId) {
+                        changes.push("Your progress was rolled back to challenge '" + moduleViewModel.getExerciseNameById(rollbackExerciseId) + "'");
+                        $.each(moduleViewModel.courseModules(), function () {
+                            var attachments = this.Module.ModuleAttachment;
+                            for (var i = 0; i < attachments.length; i++) {
+                                if (attachments[i].Id == rollbackExerciseId) {
+                                    this.IsLabCompleted = false;
+                                    moduleViewModel.viewHandsOnLab(rollbackExerciseId, this.CourseId, this.CourseModuleId, false);
+                                    moduleViewModel.getAllowedExercises(this.CourseId);
+                                    $.get("/Course/RestartExercise?moduleAttachmentId=" + rollbackExerciseId + "&courseId=" + courseId + "&classroomId=" + moduleViewModel.classroomId);
+                                }
+                            }
+                        })
+                    }
+                    var newlist = data.GateStatus;
+                    var executionStr = "|";
+                    $.each(newlist, function() {
+                        var newRequest = this;
+                        var oldRequest = moduleViewModel.gateStatus[newRequest.ClassroomGateRequestId];
+                        if (oldRequest == undefined) {
+                            if (executionStr.indexOf(newRequest.NotifiedExerciseId + "-" + newRequest.RequestStatus) < 0) {
+                                if ($.inArray(newRequest.NotifiedExerciseId + "-passsent", moduleViewModel.notifications) < 0) {
+                                    changes.push("Your request to pass challenge '" + moduleViewModel.getExerciseNameById(newRequest.NotifiedExerciseId) + "' had been sent");
+                                    moduleViewModel.notifications.push(newRequest.NotifiedExerciseId + "-passsent");
+                                }
+                                moduleViewModel.gateStatus[newRequest.ClassroomGateRequestId] = { classroomId: newRequest.ClassroomId, exerciseId: newRequest.ExerciseId, requestStatus: newRequest.RequestStatus, notifiedExerciseId: newRequest.NotifiedExerciseId }
+                                if (newRequest.RequestStatus == 1) {
+                                    moduleViewModel.getAllowedExercises(courseId);
+                                    handsOnLabVM.updateExerciseCompletition(handsOnLabVM.LabInfo().Id)
+                                    if ($.inArray(newRequest.NotifiedExerciseId + "-approved", moduleViewModel.notifications) < 0) {
+                                        changes.push("Your request to pass challenge '" + moduleViewModel.getExerciseNameById(newRequest.NotifiedExerciseId) + "' had been approved");
+                                        moduleViewModel.notifications.push(newRequest.NotifiedExerciseId + "-approved");
+                                    }
+                                }
+                                executionStr += newRequest.NotifiedExerciseId + "-" + newRequest.RequestStatus + "|";
+                            }
+                        }
+                        else {
+                            if (oldRequest.requestStatus != newRequest.RequestStatus) {
+                                if (executionStr.indexOf(newRequest.NotifiedExerciseId + "-" + newRequest.RequestStatus) < 0) {
+                                    moduleViewModel.gateStatus[newRequest.ClassroomGateRequestId].requestStatus = newRequest.RequestStatus;
+                                    switch (newRequest.RequestStatus) {
+                                        case 1:
+                                            if ($.inArray(newRequest.NotifiedExerciseId + "-approved", moduleViewModel.notifications) < 0) {
+                                                changes.push("Your request to pass challenge '" + moduleViewModel.getExerciseNameById(newRequest.NotifiedExerciseId) + "' had been approved");
+                                                moduleViewModel.notifications.push(newRequest.NotifiedExerciseId + "-approved");
+                                            }
+                                            moduleViewModel.getAllowedExercises(courseId);
+                                            handsOnLabVM.updateExerciseCompletition(handsOnLabVM.LabInfo().Id)
+                                            break;
+                                        case 2:
+                                            changes.push("Your request to pass challenge '" + moduleViewModel.getExerciseNameById(newRequest.NotifiedExerciseId) + "' had been rejected");
+                                            break;
+                                    }
+                                    executionStr += newRequest.NotifiedExerciseId + "-" + newRequest.RequestStatus + "|";
+                                }
+                            }
+                        }
+                    });
+                    newlist = data.LabEndStatus;
+                    $.each(newlist, function () {
+                        var newRequest = this;
+                        var oldRequest = moduleViewModel.labEndStatus[newRequest.ClassroomGateRequestId];
+                        if (oldRequest == undefined) {
+                            changes.push("Your request to complete the challenge had been sent");
+                            moduleViewModel.labEndStatus[newRequest.ClassroomGateRequestId] = { classroomId: newRequest.ClassroomId, exerciseId: newRequest.ExerciseId, requestStatus: newRequest.RequestStatus }
+                            if (newRequest.RequestStatus == 1) {
+                                changes.push("Your request to complete the challenge had been approved");
+                                if (handsOnLabVM.LabInfo().Id == newRequest.ExerciseId) {
+                                    handsOnLabVM.HideCheckBox(false);
+                                    handsOnLabVM.HasCompletedLab(true);
+                                }
+                                moduleViewModel.IsCourseCompleted();
+                            }
+                        }
+                        else {
+                            if (oldRequest.requestStatus != newRequest.RequestStatus) {
+                                moduleViewModel.labEndStatus[newRequest.ClassroomGateRequestId].requestStatus = newRequest.RequestStatus;
+                                switch (newRequest.RequestStatus) {
+                                    case 1:
+                                        changes.push("Your request to complete the challenge had been approved");
+                                        if (handsOnLabVM.LabInfo().Id == newRequest.ExerciseId) {
+                                            handsOnLabVM.HideCheckBox(false);
+                                            handsOnLabVM.HasCompletedLab(true);
+                                        }
+                                        moduleViewModel.IsCourseCompleted();
+                                        break;
+                                    case 2:
+                                        changes.push("Your request to complete the challenge had been rejected");
+                                        break;
+                                }
+                            }
+                        }
+                    });
+                    //handsOnLabVM.SetNextExerciseAccessibility();         
+
+                    if (changes.length > 0) {
+                        var content = "";
+                        $.each(changes, function () {
+                            content += "<p>" + this + "</p>"
+                        });
+                        $(".modal-body", $("#modalgateinfo")).html(content);
+                        $("#modalgateinfo").modal("show");
+                    }
+                    else {
+                        if (data.UnreadMessages && data.UnreadMessages > 0) {
+                            if (($("#messaging-modal").data('bs.modal') || {}).isShown != true) {
+                                $.get("/Course/GetUnreadMessages?classroomId=" + moduleViewModel.classroomId)
+                                    .done(function (pview) {
+                                        if (pview.length > 0) {
+                                            $("#lab-messaging-wrapper").html(pview);
+                                            $("#messaging-modal").modal("show");
+                                            var ids = $("#messageids", $("#messaging-modal")).val();
+                                            if (ids && ids.length > 0) {
+                                                $.get("/Course/ConfirmMessageReception?classroomid=" + moduleViewModel.classroomId + "&ids=" + ids);
+                                            }
+                                            moduleViewModel.loadAllMessages();
+                                        }
+                                    });
+                            }
+                        }
+                    }
+                }
+                moduleViewModel.startGatePolling(courseId);
+            });
+        }, 3000);
+    },
+
+    getExerciseNameById: function (exerciseId) {
+        var response = exerciseId;
+        if (moduleViewModel.courseModules().length > 0) {
+            $.each(moduleViewModel.courseModules(), function () {
+                if (this.Module && this.Module.ModuleAttachment && this.Module.ModuleAttachment.length > 0) {
+                    $.each(this.Module.ModuleAttachment, function () {
+                        if (this.Id == exerciseId) {
+                            response = this.Name;
+                        }
+                    });
+                }
+            })
+        }
+
+        return response;
+    },
+
+    getLastExerciseId: function () {
+        var exercises = [];
+        $.each(moduleViewModel.courseModules(), function () {
+            var attachments = this.Module.ModuleAttachment;
+            for (var i = 0; i < attachments.length; i++) {
+                if (attachments[i].AttachmentTypeId == 2) {
+                    exercises.push(attachments[i].Id);
+                }
+            }
+        });
+        if (exercises.length > 0) {
+            return exercises[exercises.length - 1]
+        }
+        else {
+            return 0;
+        }
+    },
+
+    animateLab: function () {
+        $('dt').first().addClass('animated');
+    },
+
+    loadImageSuccess: function () {
+        $("#labdetails").removeClass('labdetails_without_topmargin').addClass('labdetails_with_topmargin');
+        moduleViewModel.resetTimelineHeight();
+    },
+
+    playVideo: function (data) {
+        $("#labguide").html("Course Video");
+        ajaxRequest.makeAPIRequest("/Module/KMRequiredStatus", "GET", {
+            "courseId": data.CourseId,
+            "courseModuleId": data.CourseModuleId
+        }, function (result) {
+            if (result.KMRequiredStatus) {
+                var previouslyActive = $('.module_title_activ');
+                var previousLabModule = $('.activeLab');
+                if (previouslyActive.length) {
+                    previouslyActive.removeClass('module_title_activ');
+                }
+
+                if (previousLabModule.length) {
+                    previousLabModule.removeClass('activeLab');
+                }
+
+                $("li[moduleId=" + data.ModuleId + "]").addClass('module_title_activ');
+                $("li[labModuleId=" + data.ModuleId + "]").addClass('activeLab');
+
+                var module_activity = moduleViewModel.CurrentModule().ModuleActivity;
+                var activity_stateName = "";
+                if (module_activity != null) {
+                    activity_stateName = moduleViewModel.CurrentModule().ModuleActivity.ActivityStateName;
+                }
+                //var value = moduleViewModel.moduleVideoPlayer.currentTime();
+                if (module_activity == null || activity_stateName != "Completed") {
+                    ////if (value > 0) {
+                    ////    moduleViewModel.saveModuleActivity("InProgress", value);
+                    ////}
+                    //var previousValue = 0;
+                    //if (moduleViewModel.CurrentModule().ModuleActivity != null && moduleViewModel.CurrentModule().ModuleActivity.CurrentValue != null) {
+                    //    previousValue = moduleViewModel.CurrentModule().ModuleActivity.CurrentValue;
+                    //}
+                    //if (value > 0 && (moduleViewModel.CurrentModule().ModuleActivity == null || moduleViewModel.CurrentModule().ModuleActivity.CurrentValue == null || moduleViewModel.CurrentModule().ModuleActivity.CurrentValue != value)) {
+                    //    moduleViewModel.saveModuleActivity("InProgress", value);
+                    //    moduleViewModel.saveUserActivity(moduleViewModel.CourseId(), moduleViewModel.CurrentModule().TrainingMaterialId, "InProgress", previousValue, value);
+                    //}
+                }
+
+                moduleViewModel.CurrentModule(data.Module);
+                moduleViewModel.selectedModuleId(data.Module.TrainingMaterialId);
+                moduleViewModel.selectedCourseModuleId(data.CourseModuleId);
+                moduleViewModel.CurrentModuleDescription(data.Module.TrainingMaterial.Description);
+                moduleViewModel.getCurrentIndex();
+
+                if (data.Module.ModuleFeedback != null || moduleViewModel.ratingValue() > 0) {
+                    $('#rating').raty('score', moduleViewModel.ratingValue());
+                }
+                else {
+                    $('#rating').raty('score', 0);
+                }
+                var videoUrl = moduleViewModel.CurrentModule().TrainingVideo.VideoUrl + '&format=smooth';
+                //var videoUrl = 'http://admotadevmediastorage.streaming.mediaservices.windows.net/970b6b1f-38b5-497f-9402-c36a674c9fdb/Blob_f6669363-1c7b-4214-8a79-4c56972b93c7.ism/Manifest';
+                moduleViewModel.moduleVideoURL(videoUrl);
+
+                if (moduleViewModel.CurrentModule().TrainingVideo.Description != null) {
+                    moduleViewModel.ModuleVideoName(moduleViewModel.CurrentModule().TrainingVideo.Description);
+                }
+                else {
+                    moduleViewModel.ModuleVideoName(moduleViewModel.CurrentModule().TrainingVideo.ModuelName);
+                }
+
+                // On Selecting a Module to view content save Activity
+                //moduleViewModel.UserActivityLogId("");
+                //moduleViewModel.saveUserActivity(moduleViewModel.CourseId(), data.Module.TrainingMaterialId, "Started");
+
+                // Handle next module's video
+                moduleViewModel.playModuleVideo();
+            }
+            else {
+                opsgility.showMessageNotification("Message.", result.KMRequiredStatusMessage, false);
+            }
+        }, null, null, false, false);
+    },
+
+    saveModuleActivity: function (status, currentValue) {
+        if (!moduleViewModel.CurrentModule().ModuleActivity) {
+            moduleViewModel.CurrentModule().ModuleActivity = {
+                ModuleId: moduleViewModel.CurrentModule().TrainingMaterialId,
+                ModuleAttachmentId: moduleViewModel.CurrentModule().TrainingVideo.Id
+            }
+        }
+
+        moduleViewModel.CurrentModule().ModuleActivity.ActivityStateName = status;
+        moduleViewModel.CurrentModule().ModuleActivity.CurrentValue = currentValue;
+        ajaxRequest.makeAPIRequest("/Module/SaveModuleActivity", "POST",
+            ko.toJSON({
+                CourseModuleId: moduleViewModel.selectedCourseModuleId(),
+                ModuleAttachmentId: moduleViewModel.CurrentModule().TrainingVideo.Id,
+                ActivityStateName: moduleViewModel.CurrentModule().ModuleActivity.ActivityStateName,
+                CurrentValue: moduleViewModel.CurrentModule().ModuleActivity.CurrentValue
+            }), null, null, null, false);
+    },
+
+    moduleActivityOnUnload: function () {
+        var currentTime = moduleViewModel.moduleVideoPlayer.currentTime();
+
+        if (moduleViewModel.CurrentModule().ModuleActivity != null && moduleViewModel.CurrentModule().ModuleActivity.ActivityStateName != null && moduleViewModel.CurrentModule().ModuleActivity.ActivityStateName != "Completed") {
+            moduleViewModel.saveModuleActivity("InProgress", currentTime);
+        }
+    },
+
+    loadRatingTypes: function () {
+        ajaxRequest.makeAPIRequest("/Feedback/GetRatingTypes", "GET", null, moduleViewModel.setupRating);
+    },
+
+    setupRating: function (data) {
+        var rating = $('#rating');
+        rating.raty({
+            starType: 'div',
+            path: '/Images',
+            starOff: 'courses--star courses--star__empty',
+            starOn: 'courses--star courses--star__filled',
+            hints: data,
+            number: data.length,
+            click: moduleViewModel.saveRating,
+            score: function () {
+                return $(rating).attr('ratingscore');
+            }
+        });
+
+    },
+
+    saveRating: function (score, evt) {
+        data = { "TrainingMaterialId": moduleViewModel.CurrentModule().TrainingMaterialId, "RatingValue": score, "CourseId": moduleViewModel.CourseId() };
+        ajaxRequest.makeRequest("/Course/SaveUserFeedback", "POST", data, function (result) {
+            $('#rating').attr('ratingscore', result.RatingValue);
+            $('#numberOfUserRated').text('(' + result.NumberOfUserRated + ')');
+            moduleViewModel.loadRatingTypes();
+        }, null, null, false);
+
+    },
+
+    saveUserActivity: function (courseId, moduleId, status, previousValue, currentValue) {
+        ajaxRequest.makeAPIRequest("/User/SaveUserActivity", "POST", ko.toJSON({ "UserActivityLogId": moduleViewModel.UserActivityLogId(), "CourseId": courseId, "ModuleId": moduleId, "Status": status, PreviousValue: previousValue, CurrentValue: currentValue }), function (data) {
+            moduleViewModel.UserActivityLogId(data.UserActivityLogId);
+        }, null, null, false);
+    },
+
+    getCurrentIndex: function () {
+        $.each(moduleViewModel.courseModules(), function (index, value) {
+            if (value.Module.TrainingMaterialId == moduleViewModel.CurrentModule().TrainingMaterialId) {
+                moduleViewModel.currentIndex(index);
+                if (moduleViewModel.courseModules().length > index + 1) {
+                    moduleViewModel.NextModuleTitle(moduleViewModel.courseModules()[index + 1].Module.TrainingMaterial.Title);
+                }
+
+                if (index > 0) {
+                    moduleViewModel.PreviousModuleTitle(moduleViewModel.courseModules()[index - 1].Module.TrainingMaterial.Title);
+                }
+
+            }
+        });
+    },
+
+    nextModule: function (data) {
+        moduleViewModel.playVideo(moduleViewModel.courseModules()[data]);
+    },
+
+    adjustExerciseButtons: function () {
+        var exercises = $(".module-exercise");
+        var id = handsOnLabVM.LabInfo().Id;
+        if (id) {
+            for (var i = 0; i < exercises.length; i++) {
+                if (exercises[i].id == id) {
+                    if (i == 0) {
+                        $("#leftclick").addClass("hide");
+                    }
+                    if (i == exercises.length - 1) {
+                        $("#rightclick").addClass("hide");
+                    }
+                }
+            }
+        }
+    },
+
+    viewHandsOnLab: function (id, courseId, courseModuleId, isLabCompleted) {
+        if (moduleViewModel.allowedExercises.indexOf(id) < 0) {
+            return;
+        }
+        $.each(moduleViewModel.courseModules(), function () {
+            if (this.CourseModuleId == courseModuleId) {
+                moduleViewModel.CurrentModule(this.Module);
+            }
+        });
+        moduleViewModel.notifications = [];
+        $("#labguide").html("Lab Guide");
+        handsOnLabVM.loadHandsOnLab(id, courseId, courseModuleId, isLabCompleted);
+        moduleViewModel.showLab(true);
+        moduleViewModel.showdefaultView(false);
+        $("#VivaTimelinediv").removeClass("hidden");
+        var exercises = $(".module-exercise");
+        $("#numberOfExercises").html(exercises.length);
+        for (var i = 0; i < exercises.length; i++) {
+            if (exercises[i].id == id) {
+                $("#currentExercise").html(i + 1);
+                if (i > 0) {
+                    var left = exercises[i - 1];
+                    $("#leftclick").attr("back", left.id);
+                }
+                if (i == 0) {
+                    $("#leftclick").addClass("hide");
+                }
+                else {
+                    $("#leftclick").removeClass("hide");
+                }
+                if (i < exercises.length - 1) {
+                    var right = exercises[i + 1];
+                    $("#rightclick").attr("front", right.id);
+                }
+                if (i == exercises.length - 1) {
+                    $("#rightclick").addClass("hide");
+                }
+                else {
+                    $("#rightclick").removeClass("hide");
+                }
+            }
+        }
+    },
+
+    viewKM: function (id, moduleId) {
+        $("#labguide").html("Knowledge Measurement");
+        ajaxRequest.makeAPIRequest("/Module/GetLastKm", "GET", {
+            "id": id,
+            "moduleId": moduleId
+        }, function (response) {
+            if (response.IsViewKM == true) {
+                moduleKMViewModel.loadModuleKMInfo(id, moduleId);
+            }
+            else {
+                var fullDate = new Date(response.LastUpdateDate + " " + response.LastUpdateTime + " UTC");
+                moduleViewModel.LastUpdateDate(fullDate.toLocaleDateString());
+                moduleViewModel.LastUpdateTime(fullDate.toLocaleTimeString());
+                $("#delayKnowledgeMeasureModal").modal('show');
+            }
+        });
+
+    },
+
+    playSegment: function (jumpTO) {
+        moduleViewModel.moduleVideoPlayer.currentTime(jumpTO);
+        moduleViewModel.saveUserActivity(moduleViewModel.CourseId(), moduleViewModel.CurrentModule().TrainingMaterialId, "Started");
+    },
+
+    loadCourseModulesData: function (courseId, CourseModuleId) {
+        ajaxRequest.makeAPIRequest("/Module/GetCourseModuleData", "GET", {
+            "courseCode": courseId,
+            "selectedSubscription": null,
+            "courseModuleId": CourseModuleId
+        }, function (response) {
+            var courseFound = response.m_Item1;
+
+            if (!courseFound) {
+                var baseurl = opsgility.getBaseURL();
+                window.location.href = baseurl + "/Error/NotFound";
+            }
+
+            var data = response.m_Item2;
+
+            moduleViewModel.IsLabCompleted(true);
+            if (data.StartCourseModule.Module.ModuleFeedback) {
+                moduleViewModel.ratingValue(data.StartCourseModule.Module.ModuleFeedback.RatingValue);
+                $('#rating').raty('score', data.StartCourseModule.Module.ModuleFeedback.RatingValue);
+            }
+            if (data.RelatedInformationList != null) {
+                moduleViewModel.relatedInformations(data.RelatedInformationList);
+            }
+
+            moduleViewModel.currentCourse(data.TrainingMaterialName);
+            moduleViewModel.askaQuestionURL(data.URL);
+            moduleViewModel.courseModules(data.CourseModules);
+            moduleViewModel.CurrentModule(data.StartCourseModule.Module);
+            moduleViewModel.CurrentModuleDescription(data.StartCourseModule.Module.TrainingMaterial.Description);
+            moduleViewModel.getCurrentIndex();
+            //$("li[moduleId=" + data.StartCourseModule.Module.TrainingMaterialId + "]").addClass('module_title_activ');
+            //$("li[labModuleId=" + data.StartCourseModule.ModuleId + "]").addClass('activeLab');
+            $("a[labmoduleid=" + data.StartCourseModule.ModuleId + "]").closest("div").css('display', 'block');
+            var children = $("a[labmoduleid=" + data.StartCourseModule.ModuleId + "]").closest(".course--module").children()
+            $(children[2]).toggleClass('course--module-expand__rotate')
+
+            moduleViewModel.selectedModuleId(data.StartCourseModule.Module.TrainingMaterialId);
+            moduleViewModel.selectedCourseModuleId(data.StartCourseModule.CourseModuleId);
+            moduleViewModel.attachEvent();
+            moduleViewModel.resetTimelineHeight();
+
+
+        }, null, null, true, true);
+        moduleViewModel.IsCourseCompleted();
+    },
+
+    //Check whether course is complete or not.
+    IsCourseCompleted: function () {
+        ajaxRequest.makeAPIRequest("/Course/IsCourseCompleted", "GET", {
+            "courseId": moduleViewModel.CourseId()
+        }, function (response) {
+            var result = response.m_Item1;
+            var userid = response.m_Item2;
+            if (result) {
+                var baseurl = opsgility.getBaseURL();
+                var trainighistoryUrl = baseurl + "/Manage/TrainingHistory?userId=" + userid;
+
+                //Show notification.
+                if ($("#isOpenHack").val() == "true") {
+                    opsgility.showSingleConfirm({
+                        message: "You have completed: " + moduleViewModel.currentCourse(),
+                        heading: "Congratulations!",
+                    });
+                }
+                else {
+                    opsgility.showSingleConfirm({
+                        message: "You have completed: " + moduleViewModel.currentCourse() + "<br>View your <a href='" + trainighistoryUrl + "'>training history</a> to download your certificate of completion.",
+                        heading: "Congratulations!",
+                    });
+                }
+            }
+        }, null, null, true, true);
+    },
+
+    saveUserNote: function () {
+        if (moduleViewModel.userNote() != "" && moduleViewModel.userNote() != null && moduleViewModel.userNote() != undefined) {
+            if (moduleViewModel.moduleVideoPlayer == undefined || moduleViewModel.moduleVideoPlayer.currentTime() == undefined) {
+                var currentTime = 0
+            }
+            else { var currentTime = moduleViewModel.moduleVideoPlayer.currentTime(); }
+            $('ul.nav-pills li a[href="#yourNotes"]').trigger('click');
+            var cmid = parseInt($("#FeedbackExercise").val());
+            if (isNaN(cmid)) {
+                cmid = moduleViewModel.selectedCourseModuleId();
+            }
+            var attachments = [];
+            $.each($("[attachment-item]", $("#NoteAttachmentArea")), function () {
+                attachments.push($(this).attr("attachment-item"));
+            });
+            ajaxRequest.makeAPIRequest("/Module/SaveUserNote", "POST",
+                ko.toJSON({
+                    CourseModuleId: cmid,
+                    Notes: moduleViewModel.userNote,
+                    CurrentValue: currentTime,
+                    FeedbackTypeId: $("#FeedbackType").val(),
+                    Attachments: attachments
+                }), function (result) {
+                    $('#addNotes').modal('hide');
+                    $("#NoteAttachment").addClass("hide");
+                    $("#NoteAttachmentArea").html("");
+                    //result.ModuleName = moduleViewModel.CurrentModule().ModuleName;
+                    //moduleViewModel.userNote(null);
+                    //var noteLength = moduleViewModel.userNotes().length;
+                    //if (noteLength >= 5) {
+                    //    moduleViewModel.userNotes().pop();
+                    //}
+                    //moduleViewModel.userNotes().unshift(result);
+                    //var userNotes = moduleViewModel.userNotes();
+                    //moduleViewModel.userNotes([]);
+                    //moduleViewModel.userNotes(userNotes);
+                    moduleViewModel.loadAllUserNotes();
+                    opsgility.showNotificationMessage("Message ", "Feedback sucessfully submitted.", true);
+                    $("#showallnote").show();
+                }, null, null, false, false);
+        }
+        else {
+            opsgility.showNotificationMessage("Error ", "Please enter feedback.", false);
+        }
+    },
+
+    updateUserNote: function () {
+        var noteId = $("#updateNoteId").val();
+        var feedbackTypeId = $("#updateFeedbackType").val();
+        var message = $("#updateNoteText").val();
+        var attachments = [];
+        $.each($("[attachment-item]", $("#UpdateNoteAttachmentArea")), function () {
+            attachments.push($(this).attr("attachment-item"));
+        });
+        if (message != "" && message != null && message != undefined) {
+            //$.get("/Module/UpdateUserNote?noteId=" + noteId + "&feedbackTypeId=" + feedbackTypeId + "&message=" + message).done(function () {
+            //    $('#updateNotes').modal('hide');
+            //    moduleViewModel.loadAllUserNotes();
+            //    opsgility.showNotificationMessage("Message ", "Feedback sucessfully submitted.", true);
+            //    $("#showallnote").show();
+            //})
+
+            ajaxRequest.makeAPIRequest("/Module/UpdateUserNote", "POST", 
+                ko.toJSON({
+                    UserNoteId: noteId,
+                    Notes: message,
+                    FeedbackTypeId: feedbackTypeId, 
+                    Attachments: attachments
+                }),function (result) {
+                    $('#updateNotes').modal('hide');
+                    moduleViewModel.loadAllUserNotes();
+                    if (result == true) {
+                        opsgility.showNotificationMessage("Message ", "Feedback sucessfully updated.", true);
+                    }
+                    else {
+                        opsgility.showNotificationMessage("Message ", "Feedback update failed.", false);
+                    }
+                    $("#showallnote").show();
+                }, null, null, false, false);
+        }
+        else {
+            opsgility.showNotificationMessage("Error ", "Please enter feedback.", false);
+        }
+    },
+
+    //loadUserNotes: function () {
+    //    ajaxRequest.makeAPIRequest("/Module/GetUserNotes", "GET", { courseCode: $('#courseId').val() }, function (result) {
+    //        moduleViewModel.userNotes(result);
+    //        moduleViewModel.isVisible(true);
+    //    }, null, null, false, false);
+    //    $("#showallnote").show();
+    //},
+
+    //loadAllUserNotes: function () {
+    //    ajaxRequest.makeAPIRequest("/Module/GetAllUserNotes", "GET", { courseCode: $('#courseId').val() }, function (result) {
+    //        moduleViewModel.userNotes([]);
+    //        moduleViewModel.userNotes(result);
+    //        moduleViewModel.isVisible(false);
+    //        $("#showallnote").hide();
+    //    }, null, null, false, false);
+    //},
+
+    loadAllUserNotes: function () {
+        ajaxRequest.makeAPIRequest("/Module/GetUserLabNotes", "GET", { courseCode: $('#courseId').val() }, function (result) {
+            moduleViewModel.userNotes([]);
+            moduleViewModel.userNotes(result);
+            moduleViewModel.isVisible(false);
+            $("#showallnote").hide();
+        }, null, null, false, false);
+    },
+
+    scrollToModuleNote: function (coursemoduleId) {
+        //var object = { courseCode: '', coursemoduleId: coursemoduleId, moduleSegmentId: null };
+        ajaxRequest.makeAPIRequest("/Module/GetUserLabNotes", "GET", { courseCode: $('#courseId').val() }, function (result) {
+            moduleViewModel.userNotes([]);
+            moduleViewModel.userNotes(result);
+            moduleViewModel.isVisible(false);
+            $("#showallnote").hide();
+        }, null, null, false, false);
+        $('.nav-pills a[href="#NotesTab"]').tab('show');
+        setTimeout(function () {
+            var element = $("[moduleId='" + coursemoduleId + "']", $("#coursenotelist"))[0];
+            var group = $(element).attr("group");
+            var top = document.getElementById('notegroup-' + group).offsetTop;
+            $('#coursenotelist').animate({ scrollTop: (top - 75) }, 1000);
+            $('#notegroup-' + group, $('#coursenotelist')).addClass('note-emphasized');
+        }, 3000);
+        //var bodyoffset = $("#courseDetailsdiv").offset().top - $('body').offset().top;
+        //$('body').animate({ scrollTop: (bodyoffset) }, 1000);
+    },
+
+    playNoteVideo: function (courseModuleId, currentValue) {
+        $("#labguide").html("Course Video");
+        if (moduleViewModel.selectedCourseModuleId() == courseModuleId) {
+
+            moduleViewModel.moduleVideoPlayer.currentTime(currentValue);
+            moduleViewModel.saveUserActivity(moduleViewModel.CourseId(), moduleViewModel.CurrentModule().TrainingMaterialId, "Started", 0, 0);
+        } else {
+            var data = moduleViewModel.getCurrentModule(courseModuleId);
+            if (data.Module.ModuleActivity == null || data.Module.ModuleActivity == undefined) {
+                $("body").on("videoplaystarted", function () {
+                    $("body").off("videoplaystarted");
+                    setTimeout(function () {
+                        moduleViewModel.playNoteVideo(courseModuleId, currentValue);
+                    }, 5000);
+                })
+                $.each(moduleViewModel.courseModules(), function () {
+                    if (this.CourseModuleId == courseModuleId) {
+                        moduleViewModel.playVideo(this);
+                    }
+                });
+                return
+            }
+
+            data.Module.ModuleActivity.CurrentValue = currentValue;
+
+            var module_activity = moduleViewModel.CurrentModule().ModuleActivity;
+            var activity_stateName = "";
+            if (module_activity != null) {
+                activity_stateName = moduleViewModel.CurrentModule().ModuleActivity.ActivityStateName;
+            }
+
+            if (module_activity == null || activity_stateName != "Completed") {
+                var previousValue = 0;
+                if (moduleViewModel.CurrentModule().ModuleActivity != null && moduleViewModel.CurrentModule().ModuleActivity.CurrentValue != null) {
+                    previousValue = moduleViewModel.CurrentModule().ModuleActivity.CurrentValue;
+                }
+                if (moduleViewModel.moduleVideoPlayer.currentTime() > 0 && (moduleViewModel.CurrentModule().ModuleActivity == null || moduleViewModel.CurrentModule().ModuleActivity.CurrentValue == null || moduleViewModel.CurrentModule().ModuleActivity.CurrentValue != moduleViewModel.moduleVideoPlayer.currentTime())) {
+                    moduleViewModel.saveModuleActivity("InProgress", moduleViewModel.moduleVideoPlayer.currentTime());
+                    moduleViewModel.saveUserActivity(moduleViewModel.CourseId(), moduleViewModel.CurrentModule().TrainingMaterialId, "InProgress", previousValue, moduleViewModel.moduleVideoPlayer.currentTime());
+                }
+            }
+
+            moduleViewModel.CurrentModule(data.Module);
+            moduleViewModel.selectedModuleId(data.Module.TrainingMaterialId);
+            moduleViewModel.selectedCourseModuleId(data.CourseModuleId);
+            moduleViewModel.CurrentModuleDescription(data.Module.TrainingMaterial.Description);
+            moduleViewModel.getCurrentIndex();
+
+            var videoUrl = moduleViewModel.CurrentModule().TrainingVideo.VideoUrl + '&format=smooth';
+            moduleViewModel.moduleVideoURL(videoUrl);
+
+            if (moduleViewModel.CurrentModule().TrainingVideo.Description != null) {
+                moduleViewModel.ModuleVideoName(moduleViewModel.CurrentModule().TrainingVideo.Description);
+            }
+            else {
+                moduleViewModel.ModuleVideoName(moduleViewModel.CurrentModule().TrainingVideo.ModuelName);
+            }
+
+            // Handle next module's video
+            moduleViewModel.playModuleVideo();
+
+        }
+
+    },
+
+    getCurrentModule: function (courseModuleId) {
+        var result = null;
+        $.each(moduleViewModel.courseModules(), function (index, value) {
+            if (value.CourseModuleId == courseModuleId) {
+                result = value;
+            }
+        });
+        return result;
+    },
+
+    //Function for playing module video through azure .
+    playModuleVideo: function () {
+        var isSeeked = false;
+        if (moduleViewModel.CurrentModule().ModuleActivity && (moduleViewModel.CurrentModule().ModuleActivity.ActivityStateName == 'InProgress' || moduleViewModel.CurrentModule().ModuleActivity.ActivityStateName == "OnUnload")) {
+            isSeeked = true;
+        }
+
+        var playerOptions = {
+            //techOrder: ["azureHtml5JS", "flashSS", "silverlightSS", "html5"],
+            techOrder: ["azureHtml5JS", "html5"],
+            nativeControlsForTouch: false,
+            autoplay: false,
+            controls: true,
+            width: "100%",
+            height: "580px",
+            logo: { "enabled": false },
+            hotKeys: { "enableFullscreen": true, "enableNumbers": true, "enableJogStyle": true, "enableMute": true, "seekStep": 30, "volumeStep": 5 },
+        };
+
+        moduleViewModel.moduleVideoPlayer = amp("moduleVideoPlayer", playerOptions, function () {
+        });
+
+        moduleViewModel.moduleVideoPlayer.addEventListener('ready', function () {
+        });
+
+        moduleViewModel.moduleVideoPlayer.addEventListener("durationchange", function () {
+            var duration = moduleViewModel.moduleVideoPlayer.duration();
+            if (duration > 0 && isSeeked) {
+                moduleViewModel.moduleVideoPlayer.currentTime(moduleViewModel.CurrentModule().ModuleActivity.CurrentValue);
+                isSeeked = false;
+            }
+        });
+
+        moduleViewModel.moduleVideoPlayer.addEventListener('play', function () {
+            // Listen to pause, only while playing
+            moduleViewModel.listenToPause();
+
+            //if (moduleViewModel.CurrentModule().ModuleActivity == null || moduleViewModel.CurrentModule().ModuleActivity.CurrentValue == 0) {
+            //Started.
+            moduleViewModel.UserActivityLogId("");
+            moduleViewModel.saveUserActivity(moduleViewModel.CourseId(), moduleViewModel.CurrentModule().TrainingMaterialId, "Started");
+            //}
+        });
+
+        moduleViewModel.moduleVideoPlayer.addEventListener('ended', function () {
+            moduleViewModel.moduleVideoPlayer.removeEventListener('pause');
+            moduleViewModel.saveUserActivity(moduleViewModel.CourseId(), moduleViewModel.CurrentModule().TrainingMaterialId, "Completed");
+            moduleViewModel.saveModuleActivity("Completed", 0);
+        });
+
+        moduleViewModel.moduleVideoPlayer.src([
+            {
+                src: moduleViewModel.moduleVideoURL(),
+                type: "application/vnd.ms-sstr+xml",
+                //streamingFormats: ['SMOOTH']
+            },
+        ]);
+        $("body").trigger("videoplaystarted");
+    },
+
+    setPlaySpeed: function (data) {
+        var videoElement = document.getElementById('moduleVideoPlayer_html5_api');
+        videoElement.playbackRate = data;
+    },
+
+    repeatLastLoad: function () {
+        handsOnLabVM.RepeatLastLoad();
+    },
+
+    listenToPause: function () {
+        moduleViewModel.moduleVideoPlayer.addEventListener('pause', function () {
+            //console.log('player paused');
+            moduleViewModel.saveUserActivity(moduleViewModel.CourseId(), moduleViewModel.CurrentModule().TrainingMaterialId, "Completed");
+            var value = moduleViewModel.moduleVideoPlayer.currentTime();
+
+            var module_activity = moduleViewModel.CurrentModule().ModuleActivity;
+            var activity_stateName = "";
+            if (module_activity != null) {
+                activity_stateName = moduleViewModel.CurrentModule().ModuleActivity.ActivityStateName;
+            }
+
+            if (module_activity == null || activity_stateName != "Completed" || value != 0) {
+                moduleViewModel.saveModuleActivity("InProgress", value);
+            }
+
+            moduleViewModel.moduleVideoPlayer.removeEventListener('pause');
+        });
+    },
+    viewHandsOnLabFullScreen: function () {
+        $("#handsonlabiframe").fullScreen(true);
+    },
+    resetTimelineHeight: function () {
+    },
+
+    loadAllMessages: function () {
+        $.get("/Course/GetAllMessages?classroomId=" + moduleViewModel.classroomId).done(function (pview) {
+            $("#messages-tab").html(pview);
+            var ids = $("#messageids", $("#messages-tab")).val();
+            if (ids && ids.length > 0) {
+                $.get("/Course/ConfirmMessageReception?classroomid=" + moduleViewModel.classroomId + "&ids=" + ids);
+            }
+        })
+    },
+    attachEvent: function (e) {
+
+        $("[messaging-wrapper]").on("click", "[send-reply]", function () {
+            var wrapper = $(this).closest("[messaging-wrapper]");
+            var messageId = $(this).attr("send-reply");
+            var textarea = $("[textareainput='" + messageId + "']", $(wrapper));
+            var validationmessage = $("[validationmessage='" + messageId + "']", $(wrapper));
+            var replyMessage = $(textarea).val();
+            var replyconfirm = $(".lab-messenger-message-replyconfirmed", $(textarea).closest(".lab-messenger-message"));
+            if (replyMessage == undefined || replyMessage == null || replyMessage.length == 0) {
+                $(validationmessage).removeClass("hide");
+            }
+            else {
+                $(validationmessage).addClass("hide");
+                var params = {
+                    classroomId: moduleViewModel.classroomId,
+                    message: replyMessage,
+                    messageId: messageId
+                }
+                $.post("/Course/SendReplyMessage", params).done(function (response) {
+                    if (response == "True") {
+                        $(textarea).closest(".lab-messenger-message-replyblock").addClass("hide");
+                        $(replyconfirm).removeClass("hide");
+                    }
+                    else {
+                        $("[messagesenderror='" + messageId + "']", $(wrapper)).removeClass("hide");
+                    }
+                });
+            }
+        })
+
+        $("[messaging-wrapper]").on("click", "[open-reply-block]", function () {
+            var wrapper = $(this).closest("[messaging-wrapper]");
+            var element = $(this);
+            var block = $(".lab-messenger-message-replyblock", $(element).closest(".lab-messenger-message"));
+            $(element).addClass("hide");
+            $(block).removeClass("hide");
+        })
+
+        $('.timelinenoteicon').click(function (e) {
+            e.preventDefault();
+            $("option", $("#FeedbackType")).removeAttr("selected");
+            $($("option", $("#FeedbackType"))[0]).attr("selected", "true");
+            var content = "";
+            $.each(moduleViewModel.courseModules(), function () {
+                var cmid = this.CourseModuleId;
+                for (var i = 0; i < this.Module.ModuleAttachment.length; i++) {
+                    var att = this.Module.ModuleAttachment[i];
+                    if (att.AttachmentTypeId == 2 && $.inArray(att.Id, moduleViewModel.allowedExercises) >= 0) {
+                        if (att.Id == handsOnLabVM.LastAttachment) {
+                            content += "<option value='" + cmid + "' selected>" + att.Name + "</option>";
+                        }
+                        else {
+                            content += "<option value='" + cmid + "'>" + att.Name + "</option>";
+                        }
+                    }
+                }
+            });
+            $("#FeedbackExercise").html(content);
+            moduleViewModel.userNote("");
+            $("#NoteAttachment").addClass("hide");
+            $("#NoteAttachmentArea").html("");
+            $("#fileupload-button-update").removeAttr("disabled");
+            $("#fileupload-button-update").removeClass("hide");
+            $('#addNotes').modal('show');
+        });
+
+        $("body").on("creditbalanceupdated", function () {
+            if (moduleViewModel.StartRealTimeLabsData > 0) {
+                var currentBalance = parseInt($('#OnlineLabTab_CurrentUserCreditBalance').html());
+                if (currentBalance >= parseInt(moduleViewModel.StartRealTimeLabsData)) {
+                    $('#modalNotEnoughCredits').modal('hide');
+                    $("#startOnlineLabTrigger").trigger("click");
+                    moduleViewModel.StartRealTimeLabsData = undefined;
+                }
+                else {
+                    $("#userCredits").html(currentBalance);
+                    $("#labCredits").html(moduleViewModel.StartRealTimeLabsData);
+                    var diff = parseInt(moduleViewModel.StartRealTimeLabsData) - creditBalance;
+                    $("#creditDifference").html(diff);
+                    $("#creditDifferenceSum").html(diff);
+                }
+            }
+        });
+
+        $('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
+            if ($(e.target).attr("href") == "#labGuide") {
+                $(".exercises").removeClass("hide");
+                moduleViewModel.adjustExerciseButtons();
+            }
+            else {
+                $(".exercises").addClass("hide");
+            }
+        });
+
+        $('.course--module').click(function (e) {
+            if (e.target.classList.contains('dont-toggle')) {
+                return;
+            }
+
+            //gets hidden content
+            var children = $(e.currentTarget).children()
+            $(children[1]).slideToggle('fast')
+            $(children[2]).toggleClass('course--module-expand__rotate')
+        });
+        //$("#previous-exercise").off("click");
+        //$("#previous-exercise").on("click", function () {
+        //    if (moduleViewModel.currentExerciseIndex > 0) {
+        //        moduleViewModel.currentExerciseIndex--;
+        //        moduleViewModel.updateExerciseView();
+        //    }
+        //});
+
+        //$("#next-exercise").off("click");
+        //$("#next-exercise").on("click", function () {
+        //    if (moduleViewModel.currentExerciseIndex < moduleViewModel.exerciseModules.length - 1) {
+        //        moduleViewModel.currentExerciseIndex++;
+        //        moduleViewModel.updateExerciseView();
+        //    }
+        //});
+        // expansion text logic
+        $('.courses--course').click(function (e) {
+            e.preventDefault();
+            var target = e.target,
+                self = this;
+
+
+            if ($(target).hasClass('courses--star')) {
+                // do not expand if stars are clicked
+            }
+
+            // if you click on the link, then it will take you to the link
+            // else it will expand the course to show description
+            else if ($(target).hasClass('courses--link')) {
+                window.location.replace($(target).attr('href'));
+            }
+
+            else if ($(target).hasClass('courses--added')) {
+                // insert ajax add to course plan logic here
+                $(target)
+                    .removeClass('courses--added')
+                    .text('Removed from Course Plan')
+                    .addClass('courses--removing')
+                    .parent().removeClass('courses--course__added')
+
+                setTimeout(function () {
+                    $(target)
+                        .removeClass('courses--removing')
+                        .text('+')
+                        .addClass('courses--add')
+                }, 2000)
+            }
+
+            else if ($(target).hasClass('courses--add')) {
+                // insert ajax add to course plan logic here
+                $(target).removeClass('courses--add').text('Added to Course Plan')
+                if ($('.courses--list').data('show-modal') === true) {
+                    $('#addToCoursePlan').modal()
+                } else {
+                    $(target).addClass('courses--adding')
+                }
+
+                $(target).parent().addClass('courses--course__added')
+                setTimeout(function () {
+                    $(target).removeClass('courses--adding').text('-').addClass('courses--added')
+                }, 2000)
+            }
+            else if ($(target).hasClass('courses-instructor')) {
+                // do not expand if instructor is clicked
+                var baseurl = opsgility.getBaseURL();
+                window.location.href = baseurl + $(target).attr('href');
+            }
+
+            else {
+                var description = $(self).find('.courses--course-description')
+                var items = [$('.courses--course-level'), $('.courses--course-published'), $('.courses--course-length'), $('.courses--course-certificate'), $('.courses--course-completion')]
+
+                if ($(description).hasClass('hidden')) {
+                    description.removeClass('hidden')
+                    description.animate({
+                        opacity: "1",
+                    }, 0, function () { });
+
+                    if (window.innerWidth <= 991) {
+                        $('.courses--main-info').addClass('courses--main-info__expanded')
+                        items.forEach(function (item) {
+                            item.css('display', 'inline-block')
+                        })
+                    }
+                }
+                else {
+                    description.addClass('hidden')
+                    description.animate({
+                        opacity: "0",
+                    }, 0, function () { });
+
+                    if (window.innerWidth <= 991) {
+                        $('.courses--main-info').removeClass('courses--main-info__expanded')
+                        items.forEach(function (item) {
+                            item.css('display', 'none')
+                        })
+                    }
+
+                }
+            }
+        });
+    },
+
+}
+
+function endOngoingLab(courseId) {
+}
+
+$("body").on("click", "#reprovision", function () {
+    $("#provisionattempts").attr("count", "second");
+    var params = {
+        courseId: moduleViewModel.CourseId(),
+        moduleId: null
+    };
+    ajaxRequest.makeAPIRequest('/Course/EndUserLabEnvironment', 'get', params,
+        function (result) {
+            if (onlineLabStarter.PaymentSubscriptionId) {
+                onlineLabStarter.startOnlineLab(onlineLabStarter.PaymentSubscriptionId, onlineLabStarter.region);
+            }
+            else {
+                onlineLabStarter.initiateOnlineLab(moduleViewModel.CourseId(), null);
+            }
+        }
+    );
+});
+
+$("body").on("click", "#noreprovision", function () {
+    var params = {
+        courseId: moduleViewModel.CourseId(),
+        moduleId: null
+    };
+    ajaxRequest.makeAPIRequest('/Course/EndUserLabEnvironment', 'get', params,
+        function (result) {
+            $('#startOnlineLabTrigger').removeClass('hide');
+            $('#labEnvironment').addClass('hide');
+            $('#endLabEnvironment').addClass('hide');
+            $("[load-after-start]").addClass("hide");
+            $("#labEnvironmentTab").removeClass("active");
+            $("a[href='#labOverview']").tab("show");
+            $("body").trigger("adjust-tabs");
+        }
+    );
+});
+
+$("body").on("click", "#pauseOnlineLabTrigger", function () {
+    var id = $(this).attr("envid");
+    var element = $(this);
+    $(element).attr("disabled", "disabled");
+    ajaxRequest.makeAPIRequest("/Course/PauseLabEnvironment?labEnvironmentId=" + id, "GET", {
+    }, function (data) {
+        var response = $.parseJSON(data);
+        if (response.IsSuccess == true) {
+            $(".modal-header", $("#environmentPauseMessage")).html("Lab Environment pause message successfully sent");
+            $(".modal-body", $("#environmentPauseMessage")).html("End Date modified to: " + response.EndDateStr);
+        }
+        else {
+            $(".modal-header", $("#environmentPauseMessage")).html("There was an error attempting to pause the lab environment");
+            $(".modal-body", $("#environmentPauseMessage")).html(response.ErrorMessage);
+            $(element).removeAttr("disabled");
+        }
+        $("#environmentPauseMessage").modal("show");
+    });
+})
+
+$("body").on("click", "#resumeOnlineLabTrigger", function () {
+    var id = $(this).attr("envid");
+    var element = $(this);
+    $(element).attr("disabled", "disabled");
+    ajaxRequest.makeAPIRequest("/Course/ResumeLabEnvironment?labEnvironmentId=" + id, "GET", {
+    }, function (data) {
+        var response = $.parseJSON(data);
+        if (response.IsSuccess == true) {
+            $(".modal-header", $("#environmentPauseMessage")).html("Lab Environment resume message successfully sent");
+            $(".modal-body", $("#environmentPauseMessage")).html("End Date modified to: " + response.EndDateStr);
+        }
+        else {
+            $(".modal-header", $("#environmentPauseMessage")).html("There was an error attempting to resume the lab environment");
+            $(".modal-body", $("#environmentPauseMessage")).html(response.ErrorMessage);
+            $(element).removeAttr("disabled");
+        }
+        $("#environmentPauseMessage").modal("show");
+    });
+})
+
+$("body").on("click", "[editableNote]", function () {
+    var noteId = $(this).attr("editableNote");
+    var note = undefined;
+    $.each(moduleViewModel.userNotes(), function () {
+        if (this && this.UserNoteGroup && this.UserNoteGroup.length > 0) {
+            for (var i = 0; i < this.UserNoteGroup.length; i++) {
+                if (this.UserNoteGroup[i].UserNoteId == noteId) {
+                    note = this.UserNoteGroup[i];
+                }
+            }
+        }
+    })
+    if (note) {
+        $("#updateNoteId").val(noteId);
+        $("#updateFeedbackType").val(note.FeedbackTypeId);
+        $("#updateNoteText").val(note.Notes);
+        $("#updateNotes").modal("show");
+        $("#UpdateNoteAttachmentArea").html("");
+        var attachments = note.Attachments;
+        if (attachments.length > 0) {
+            $("#fileupload-button-update").attr("disabled", "disabled");
+            $("#fileupload-button-update").addClass("hide");
+            $("#UpdateNoteAttachment").removeClass("hide");
+            $.each(attachments, function () {
+                $("#UpdateNoteAttachmentArea").append("<div class='row' attachment-item='" + this + "'><div class='col-md-9'>" + this.substring(37) + "</div><div class='col-md-3'><a attachment-remove='' style='cursor: pointer;'>Remove</a></div></div>");
+            });
+        }
+        else {
+            $("#UpdateNoteAttachment").addClass("hide");
+            $("#fileupload-button-update").removeAttr("disabled");
+            $("#fileupload-button-update").removeClass("hide");
+        }
+    }
+})
+
+$("body").on("click", "[rating-value]", function () {
+    var inputelement = $(this);
+    var element = $(this).closest("[task-item]");
+    var rating = $(this).attr("rating-value");
+    $.each($("[rating-value]", $(element)), function () {
+        $(this).removeClass("active");
+    });
+    $(inputelement).addClass("active");
+    $("[name='rating']", $(element)).val(rating);
+    $("[item-validation]", $(element)).addClass("hide");
+    if (rating > 0) {
+        $("[comment-input]", $(element)).removeClass("hide");
+    }
+    else {
+        $("[comment-input]", $(element)).addClass("hide");
+    }
+})
+
+$("body").on("click", "[submit-feedback]", function () {
+    var isValid = validateFeedback();
+    if (isValid == true) {
+        var vmodel = [];
+        $.each($("[task-item]", $("#feedbackprovidermodal")), function () {
+            var element = $(this);
+            var item = {};
+            item.Id = $(element).attr("task-item");
+            item.UserRating = $("[name='rating']", $(element)).val();
+            item.UserComment = $("[name='comment']", $(element)).val();
+            vmodel.push(item);
+        })
+        var params = {
+            vmodel: { Tasks: vmodel },
+            __RequestVerificationToken: $("[name='__RequestVerificationToken']").val()
+        }
+        $.post("/Course/SubmitFeedback", params).done(function (data) {
+            if (data.Success == true) {
+                $("#feedbackprovidermodal").modal("hide");
+                var source = $("[submit-feedback]", $("#feedbackprovidermodal")).attr("submit-feedback");
+                switch (source) {
+                    case "holvmupdatelab":
+                        handsOnLabVM.UpdateLab();
+                        break;
+                    case "rightclick":
+                        var id = $("[submit-feedback]", $("#feedbackprovidermodal")).attr("submit-feedback-id");
+                        $("#" + id).trigger("click");
+                        break;
+                }
+            }
+            else {
+                /// errormessage
+            }
+        })
+
+    }
+})
+
+function validateFeedback() {
+    var isValid = true;
+    $.each($("[task-item]", $("#feedbackprovidermodal")), function () {
+        var element = $(this);
+        var rating = parseInt($("[name='rating']", $(element)).val());
+        if ($.inArray(rating, [1, 2, 3]) < 0) {
+            isValid = false;
+            $("[item-validation]", $(element)).removeClass("hide");
+        }
+        else {
+            $("[item-validation]", $(element)).addClass("hide");
+        }
+    });
+
+    return isValid;
+}
+
+
+

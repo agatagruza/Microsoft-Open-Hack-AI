@@ -1,0 +1,317 @@
+﻿var opsgility =
+{
+    //Function used to get the base url
+    getBaseURL: function () {
+
+        //// The domain path.
+        //var domainPath = config.contextPath;
+        //var pattern = '';
+        //var url = '';
+
+        //if (domainPath === "/") {
+        //    // The regex to match and return the url for localhost.
+        //    url = location.href;
+        //    pattern = "https?:\/\/[a-zA-Z0-9.:]+";
+        //}
+        //else {
+        //    // To get the root path till hostname.
+        //    var rootPath = location.protocol + "//" + location.hostname;
+        //    url = rootPath + domainPath.substring(0, domainPath.length - 1);
+
+        //    // The pattern which matches the base url.
+        //    // Will match http://example.com , http://example/domain , https://example/domain, http://example:9000/domain etc
+        //    pattern = /(^|\s)((https?:\/\/)?[\w-]+(:\d+)?((?:\.|\/)[\w-]*)*\.?(:\d+)?(\/\S*)?)/gi;
+        //}
+
+        //var baseUrl = (url.match(pattern));
+        
+        //// Returns the base url
+        //return baseUrl;
+        // previous code was returning http://opsgility on the staging site.. broke most things. 
+
+        var getUrl = window.location;
+        var baseUrl = getUrl.protocol + "//" + getUrl.host;
+        return baseUrl;
+    },
+    ShowLoginPopup: function () {        
+        $('body').off('click', '.showlogindropbox');
+        $('body').on('click', '.showlogindropbox', function (e) {
+            e.preventDefault();
+            var returnUrl = window.location.pathname;
+            var returnUrlFromLogin = $("#returnUrlFromLogin").val();
+            if (returnUrlFromLogin != "" && returnUrlFromLogin != undefined) {
+                $("#returnUrlDrop").val(returnUrlFromLogin)
+            }
+            else {
+                $("#returnUrlDrop").val(returnUrl);
+            }
+            //For subscription.
+            $("#subscriptionLoginId").val($('#subscriptionId').val());
+            $("#subscriptionInvitationLoginId").val($('#subscriptionInvitationId').val());
+
+            $('#invalidLoginDrop').hide();
+            $("#loginDialog").modal('show');
+        });
+        $('body').off('click', '.showloginpopup');
+        $('body').on('click', '.showloginpopup', function () {
+            var returnUrl = window.location.pathname;
+            $("#returnUrl").val(returnUrl);
+            //For subscription.
+            $("#subscriptionLoginId").val($('#subscriptionId').val());
+            $("#subscriptionInvitationLoginId").val($('#subscriptionInvitationId').val());
+            $("#subscriptionGuid_Invitation").val($('#subscriptionGuid').val());
+            $("#teamGuid_Invitation").val($('#teamGuid').val());
+
+            $('#invalidLogin').hide();
+            $("#loginDialog").modal('show');
+        });
+    },
+    changeSubscriptionDropDownWidth:function()
+    {
+        var txt = $("#mySubscriptions option:selected").text();
+        var _t = $("#mySubscriptions");
+        var html_org = txt;
+        var html_calcS = '<span>' + html_org + '</span>';
+        jQuery('body').append(html_calcS);
+        var _lastspan = jQuery('span').last();
+        //console.log(_lastspan, html_calc);
+        _lastspan.css({
+            'font-size': _t.css('font-size')
+            , 'font-family': _t.css('font-family')
+        })
+        var width = _lastspan.width() + 5;
+        //_t.html(html_org);
+        _lastspan.remove();
+        width = (width + 13).toString() + 'px';
+        $(".styled-select").css('width', width);
+    },    
+
+    showMessageNotification: function (header, message, type) {
+        if (type == null || type == undefined)
+            type = false;
+        if (type) {
+            $('.sucessMessageBox').show();
+            $('.sucessMessageBoxFalse').hide();
+            $('.sucessMessageBoxTrue').show();
+            $('#sucessMessageBoxHeadTrue').text(header);
+            $('#sucessMessageBoxTextTrue').text(message);
+        }
+        else {
+            $('.sucessMessageBox').show();
+            $('.sucessMessageBoxTrue').hide();
+            $('.sucessMessageBoxFalse').show();
+            $('#sucessMessageBoxHeadFlase').text(header);
+            $('#sucessMessageBoxTextFlase').text(message);
+        }
+        $('.sucessMessageBox').delay(2000).fadeOut('slow');
+    },
+
+    showNotificationMessage: function (header, message, type) {
+        if (type == null || type == undefined)
+            type = false;
+        if (type) {
+            $.jGrowl(message, {
+                header: header,
+                life: 5000,
+                theme: 'sucess-background',
+                speed: 'slow',
+                animateOpen: {
+                    height: "show",
+                    width: "show"
+                },
+                animateClose: {
+                    height: "hide",
+                    width: "show"
+                }
+            });
+        }
+        else {
+            $.jGrowl(message, {
+                header: header,
+                life: 5000,
+                theme: 'error-background',
+                speed: 'slow',
+                animateOpen: {
+                    height: "show",
+                    width: "show"
+                },
+                animateClose: {
+                    height: "hide",
+                    width: "show"
+                }
+            });
+        }
+    },
+
+    getAccessToken: function (blockUI) {
+        $.ajax({
+            url: opsgility.getBaseURL() + '/Account/GetAccessToken',
+            data: { "subscriptionId": $.getCookie('CurrentSubscriptionToken') },
+            async: false,
+            success: function (response) {
+                if (response && response.length > 0) {
+                    accessToken = response;
+                }
+            },
+            blockUI: blockUI
+        });
+    },
+
+    showConfirm: function (popUpData) {
+        $("#confirmDialog .modal-body").html("<h4>" + popUpData.message + "</h4>");
+        $("#confirmation-header").text(popUpData.heading);
+        $('#confirmDialog').modal('show');
+        $(".confirmButton").unbind("click");
+        $(".confirmButton").click(function (event) {
+            event.preventDefault();
+            if (popUpData.callBack != null) {
+                opsgility.hideConfirm();
+                popUpData.callBack(popUpData.data);
+            }
+            else {
+                $('#confirmDialog').modal('hide');
+            }
+        });
+    },
+
+    hideConfirm: function () {
+        $('#confirmDialog').modal('hide');
+    },
+
+    showSingleConfirm: function (popUpData) {
+        $("#singleConfirmDialog .modal-body").html("<h4>" + popUpData.message + "</h4>");
+        $("#singleConfirmation-header").text(popUpData.heading);
+        $('#singleConfirmDialog').modal('show');
+    },
+
+    hideSingleConfirm: function () {
+        $('#singleConfirmDialog').modal('hide');
+    },
+
+    showLoadingIcon : function (element)
+    {
+        var imageUrl = opsgility.getBaseURL() + "/Content/Images/spinner.gif";
+        var width = $(element).width();
+        var height = $(element).height();
+        $(element).block({
+            //message: "<img src='" + imageUrl + "' width='100' height='100'/>",
+            message: "<img src='" + imageUrl + "'/>",
+            css: {
+                padding: 0,
+                margin: 0,
+                width: '10%',
+                top: '40%',
+                left: '35%',
+                textAlign: 'center',
+                color: '#000',
+                border: '0px',
+                cursor: 'wait',
+                opacity: 0.6,
+                background: 'none',
+                baseZ: 9999999
+            },
+            overlayCSS: { backgroundColor: 'none', opacity: 0 }
+        });
+    },
+    hideLoadingIcon : function (element)
+    {
+        $(element).unblock();
+    },
+    blockUI: function (element, block) {//A boolean argument set to block or not
+        if (block) {
+            var imageUrl = opsgility.getBaseURL() + "/Content/Images/spinner.gif";
+            var width = $(element).width();
+            var height = $(element).height();
+            var isUIBlocked = false;
+            var requestCount = 0;
+
+            $(document).ajaxSend(function (event, jqXHR, settings) {
+                if (!settings.blockUI) {
+                    return;
+                }
+
+                requestCount++;
+                isUIBlocked = true;
+
+                $(element).block({
+                    //message: "<img src='" + imageUrl + "' width='100' height='100'/>",
+                    message: "<img src='" + imageUrl + "'/>",
+                    css: {
+                        padding: 0,
+                        margin: 0,
+                        width: '10%',
+                        top: '40%',
+                        left: '35%',
+                        textAlign: 'center',
+                        color: '#000',
+                        border: '0px',
+                        cursor: 'wait',
+                        opacity: 0.6,
+                        background: 'none',
+                        baseZ: 9999999
+                    },
+                    overlayCSS: { backgroundColor: 'none', opacity: 0 }
+                });
+            });
+
+            $(document).ajaxComplete(function (event, jqXHR, settings) {
+                if (requestCount > 0) {
+                    requestCount--;
+                }
+
+                if (requestCount <= 0) {
+                    isUIBlocked = false;
+                    $(element).unblock();
+                }
+            });
+        }
+    },
+    initialize: function () {
+        var fm_options = {
+            trigger_label: "Training Alerts",
+            position: "right-top",
+            show_form: false,
+            title_label: 'Receive Training Alerts',
+            custom_html: '<form id="joinNewsLetterForm" class="joinMail" action="/Home/NewsLetterEmail" method="post" role="form">'
+                       + '<div class="newsLetterInnerScrollDiv"><div style=padding-left:10px;padding-top:10px;padding-right:10px;font-weight:bold>' +
+                            '<label><span class="newsletterLabelSpan">First Name *</span></label></br>' +
+                            '<input type="text" name="name" id="newsLetterName" placeholder="Enter First Name" /></br>' +
+                             '<label><span class="newsletterLabelSpan">Last Name *</span></label></br>' +
+                            '<input type="text" name="lastName" id="newsLetterLastName" placeholder="Enter Last Name" /></br>' +
+                            '<label><span class="newsletterLabelSpan">Email *</span></label></br>' +
+                            '<input type="text" name="emailAddress" id="newsLetterEmailAddress" placeholder="Enter Email" />' +
+              '</div>' +
+            //+ '<div style=padding-left:10px;padding-right:10px;font-weight:bold>' +
+            //                '<label><span class="newsletterLabelSpan">Name *</span></label><input type="text" name="name" id="newsLetterName" placeholder="Enter Name" /><br>' +
+            //                '<label><span class="newsletterLabelSpan">Email *</span></label><input type="text" name="emailAddress" id="newsLetterEmailAddress" placeholder="Enter Email" />' +
+            //'</div>' +
+                          '<div class=feedBackContainer style=font-weight:bold>' +
+                                '<div class=captchaContainerDiv></div>' +
+                                '<label id="captchaError" for="" class="error" style="display:none;">The code entered is wrong.</label>' +
+                                '<div class="clearfix"></div><a href="#" id="registerNewsLetter" class="registerButton"><table><tr><td style="font-size: 18pt;text-transform: none;font-family:Tahoma!important;">Submit</td>' +
+                                '<td><img src="/Images/right-arrow-circle.png" style="height: 45px; width: 45px;margin-left: 8px" /></td></tr></table></a>'+
+                               // '<a id="registerNewsLetter" class="registerButton captchaRegisterButton" style="float:right;text-align: center;text-decoration: none;">Submit</a>' +
+                          '</div></div>' +
+                          '</form>'
+        };
+
+        //init feedback_me plugin
+        fm.init(fm_options);
+        $(".captchaContainerDiv").append($("#renderedCaptcha"));
+        $("#renderedCaptcha").show();
+        joinMail.initialize();
+
+    },
+    pagination: function (pageSize, currentPageNumber, totalRecord) {
+        var fromCount = ((currentPageNumber - 1) * pageSize + 1);
+        var toCount;
+        if (currentPageNumber * pageSize <= totalRecord) {
+            toCount = currentPageNumber * pageSize;
+        }
+        else {
+            toCount = totalRecord;
+        }
+        var rangeToAppend= fromCount + '-' + toCount;
+        return rangeToAppend;
+    }
+    };

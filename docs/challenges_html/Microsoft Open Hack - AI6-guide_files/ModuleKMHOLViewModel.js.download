@@ -1,0 +1,121 @@
+﻿var moduleKMViewModel = {
+
+    moduleTitle: ko.observable(),
+    totalQuestionCount: ko.observable(),
+    currentQuestionCount: ko.observable(),
+    selectedQuestion: ko.observable(),
+    answerChoices: ko.observableArray([]),
+    enableNext: ko.observable(),
+    selectedQuestionId: null,
+    selectedAnswerId: null,
+    userAnswers: ko.observableArray([]),
+    index: 0,
+    moduleQuestions: null,
+    courseId: null,
+    CourseModuleId: null,
+    IsLab: ko.observable(true),
+    KmResult: ko.observableArray([]),
+    kmScore: ko.observable(),
+    IsMultipleChoice: ko.observable(true),
+    detailedAnswer: ko.observable(),
+    loadModuleKMInfo: function (courseModuleId, moduleId) {
+        ajaxRequest.makeAPIRequest("/Module/GetModuleKnowledgeMeasure", "GET", { courseModuleId: courseModuleId }, function (data) {
+            moduleKMViewModel.CourseModuleId = data.CourseModuleId;
+            moduleKMViewModel.courseId = data.CourseId;
+            moduleKMViewModel.moduleTitle(data.Module.TrainingMaterial.Title);
+            moduleKMViewModel.totalQuestionCount(data.Module.KnowledgeMeasureCount);
+            moduleKMViewModel.moduleQuestions = data.Module.ModuleKMs;
+            moduleKMViewModel.enableNext(false);
+            if (data.Module.KnowledgeMeasureCount > 0) {
+                // Set the Question information
+                moduleKMViewModel.IsLab(true);
+                moduleKMViewModel.index = 0;
+                moduleKMViewModel.setupQuestion();
+            }
+            moduleKMViewModel.userAnswers.removeAll()
+
+            $("#kmDialog").modal('show');
+        });
+    },
+
+    nextQuestion: function () {
+        moduleKMViewModel.userAnswers.push(
+            {
+                "ModuleKMId": moduleKMViewModel.selectedQuestionId,
+                "SelectedAnswerId": moduleKMViewModel.selectedAnswerId,
+                "CourseModuleId": moduleKMViewModel.CourseModuleId,
+                "DetailedAnswer": moduleKMViewModel.detailedAnswer()
+            });
+        moduleKMViewModel.index++;
+        moduleKMViewModel.setupQuestion();
+        moduleKMViewModel.enableNext(false);
+    },
+
+    setupQuestion: function () {
+        var currentData = moduleKMViewModel.moduleQuestions[moduleKMViewModel.index];
+        moduleKMViewModel.selectedQuestion(currentData.KMQuestion.Description);
+        moduleKMViewModel.selectedQuestionId = currentData.ModuleKMId;
+        moduleKMViewModel.answerChoices(currentData.KMQuestion.KMAnswers);
+        moduleKMViewModel.currentQuestionCount(moduleKMViewModel.index + 1);
+
+        var data = moduleKMViewModel.moduleQuestions[moduleKMViewModel.index].KMQuestion;
+        if (data.KMQuestionTypeId == 1) {
+            moduleKMViewModel.IsMultipleChoice(true);
+        }
+        else {
+            moduleKMViewModel.IsMultipleChoice(false);
+        }
+    },
+
+    onAnswerSelection: function (selectedAnswerId) {
+        if (selectedAnswerId != null) {
+            moduleKMViewModel.enableNext(true);
+            return true;
+        }
+        else {
+            if (moduleKMViewModel.detailedAnswer().length > 0) {
+                moduleKMViewModel.enableNext(true);
+                moduleKMViewModel.selectedAnswerId = null;
+                return true;
+            }
+            else {
+                moduleKMViewModel.enableNext(false);
+                return false;
+            }
+        }
+
+    },
+
+    back: function () {
+        ajaxRequest.makeAPIRequest("/Course/GetTrainingMaterialCode", "GET", { id: moduleKMViewModel.courseId }, function (result) {
+            $("#kmDialog").modal('hide');
+            if (moduleKMViewModel.kmScore() != "") {
+                var kmScore = parseFloat(moduleKMViewModel.kmScore());
+                if (kmScore < 60) {
+                    opsgility.showNotificationMessage("Message ", "Your KM score is : " + moduleKMViewModel.kmScore() + "% .<br>You need to reappear for KM after 3 hrs.", false);
+                }
+            }
+            moduleViewModel.moduleActivityOnUnload();
+            moduleViewModel.loadCourseModulesData(result, moduleKMViewModel.CourseModuleId);
+        });
+    },
+
+    submitKM: function () {
+        moduleKMViewModel.userAnswers.push(
+            {
+                "ModuleKMId": moduleKMViewModel.selectedQuestionId,
+                "SelectedAnswerId": moduleKMViewModel.selectedAnswerId,
+                "CourseModuleId": moduleKMViewModel.CourseModuleId,
+                "DetailedAnswer": moduleKMViewModel.detailedAnswer()
+            });
+        var data = ko.toJSON(moduleKMViewModel.userAnswers);
+
+        ajaxRequest.makeAPIRequest("/Module/SaveKM", "POST", data, function (data) {
+            if (data) {
+                moduleKMViewModel.IsLab(false);
+                moduleKMViewModel.KmResult(data.ModuleKMs);
+                moduleKMViewModel.kmScore(data.KMScore);
+            }
+        });
+    }
+}

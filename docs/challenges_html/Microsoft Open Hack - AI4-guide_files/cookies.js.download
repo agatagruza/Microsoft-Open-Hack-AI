@@ -1,0 +1,53 @@
+﻿(function ($)
+{
+    /// <summary>
+    /// Runs automatically at page load.  Provides functions for cookie management.
+    /// NOTE: jQuery not needed here.  Change to a basic JS object.
+    /// </summary>
+
+    $.extend({
+        getCookie: function (name)
+        {
+        	/// <summary>
+        	/// Get the value of a cookie, if it exists.  
+        	/// </summary>
+
+            var i, x, y, ARRcookies = document.cookie.split(";");
+            for (i = 0; i < ARRcookies.length; i++)
+            {
+                x = ARRcookies[i].substr(0, ARRcookies[i].indexOf("="));
+                y = ARRcookies[i].substr(ARRcookies[i].indexOf("=") + 1);
+                x = x.replace(/^\s+|\s+$/g, "");
+                if (x == name)
+                {
+                    return unescape(y);
+                }
+            }
+
+            return null;
+        },
+
+        setCookie: function (name, value, days)
+        {
+        	/// <summary>
+        	/// Set the value of a cookie.  This currently sets to the root path.
+        	/// </summary>
+
+            var date = new Date();
+            date.setDate(date.getDate() + days);
+            value = escape(value) + ((days == null) ? "" : "; expires=" + date.toUTCString()) + "; path=\/";
+            document.cookie = name + "=" + value;
+        },
+
+        deleteCookie: function (name)
+        {
+        	/// <summary>
+        	/// Expire the requested cookie.
+        	/// </summary>
+
+            $.setCookie(name, '0');
+            //document.cookie = name + '=; expires=Thu, 01 Jan 1970 00:00:01 GMT; path=\/"';
+        }
+    });
+})(jQuery);
+

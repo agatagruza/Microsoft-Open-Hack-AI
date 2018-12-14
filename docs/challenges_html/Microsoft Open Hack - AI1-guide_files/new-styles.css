@@ -1,0 +1,519 @@
+﻿body {
+  font-family: "Montserrat" !important;
+  /* The container */
+  /* Hide the browser's default radio button */
+  /* Create a custom radio button */
+  /* On mouse-over, add a grey background color */
+  /* When the radio button is checked, add a blue background */
+  /* Create the indicator (the dot/circle - hidden when not checked) */
+  /* Show the indicator (dot/circle) when checked */
+  /* Style the indicator (dot/circle) */
+}
+body .container-check {
+  display: block;
+  position: relative;
+  padding-left: 35px;
+  margin-bottom: 12px;
+  cursor: pointer;
+  font-size: 22px;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+body .container-check input {
+  position: absolute;
+  opacity: 0;
+  cursor: pointer;
+}
+body .checkmark {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 25px;
+  width: 25px;
+  background-color: white;
+  border-radius: 50%;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  box-shadow: 2.5px 4.33px 5px rgba(0, 0, 0, 0.04);
+}
+body .container-check :hover input ~ .checkmark {
+  background-color: white;
+}
+body .container-check input:checked ~ .checkmark {
+  background-color: white;
+}
+body .checkmark:after {
+  content: "";
+  position: absolute;
+  display: none;
+}
+body .container-check input:checked ~ .checkmark:after {
+  display: block;
+}
+body .container-check .checkmark:after {
+  top: 8px;
+  left: 8px;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #ff9000;
+}
+body input[type=text],
+body input[type=password],
+body input[type=email],
+body textarea {
+  width: 100%;
+  height: 46px;
+  border-radius: 6px !important;
+  box-shadow: 2.5px 4.33px 5px rgba(0, 0, 0, 0.04);
+  background-color: #ffffff;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  font-family: "Montserrat";
+  font-size: 15px;
+  color: #909090;
+}
+body .input-group-addon {
+  padding: 6px 24px !important;
+  cursor: pointer;
+  user-select: none;
+  box-shadow: 2.5px 4.33px 5px rgba(0, 0, 0, 0.04);
+  background-color: #a6c3e0;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  color: white;
+}
+body label {
+  font-size: 15px;
+  letter-spacing: 0px;
+  line-height: 26px;
+  color: #0d699e;
+  font-family: "Montserrat";
+  font-weight: 500 !important;
+}
+body .terms-conditions {
+  color: #777777;
+}
+body .terms-conditions a {
+  color: #27cbff;
+}
+body .pricing-panel ul,
+body .freetrial-panel ul {
+  list-style-type: none;
+  padding-left: 40px;
+}
+body .pricing-panel li:before,
+body .freetrial-panel li:before {
+  content: '';
+  position: absolute;
+  top: 20px;
+  left: -25px;
+  width: 10px;
+  height: 10px;
+  border-radius: 5px;
+  background-color: #27cbff;
+}
+body .hero-specific {
+  min-width: 100%;
+  position: absolute;
+}
+body .btn-new-white,
+body .btn-new-white:hover {
+  border-radius: 25px;
+  color: white;
+  border: 1px solid white;
+  font-size: 14px;
+}
+body .btn-new-green,
+body .btn-new-green:hover {
+  border-radius: 25px;
+  color: white;
+  background-color: #5cb85c;
+  font-size: 14px;
+}
+body .title-orange {
+  color: #ff9000;
+}
+body .title-blue {
+  color: #0d699e;
+}
+body .title-white {
+  color: white;
+}
+body .login {
+  background-color: #ffffff;
+  border-radius: 28px;
+  padding: 20px 80px 80px 80px;
+  box-shadow: 0px 5px 49px 0px rgba(0, 0, 0, 0.11);
+  min-width: 780px;
+  min-height: 428px;
+}
+body .login .title {
+  font-size: 30px;
+  font-family: "Montserrat", sans-serif;
+  font-weight: 600;
+}
+body .pricing .title {
+  font-size: 30px;
+  font-family: "Montserrat", sans-serif;
+  font-weight: 600;
+}
+body .pricing .subtitle {
+  color: #3898cf;
+  font-family: "Montserrat", sans-serif;
+  font-size: 22px !important;
+}
+body .pricing .pricing-panel-offers {
+  margin-top: 30px;
+  border-radius: 28px;
+  background-color: #ffffff;
+  box-shadow: 0px 5px 49px 0px rgba(0, 0, 0, 0.11);
+  color: #909090;
+  font-family: "Montserrat" !important;
+}
+body .pricing .pricing-panel-offers .pricing-table {
+  padding: 20px;
+  margin: 30px 20px 20px 20px;
+}
+body .pricing .pricing-panel-offers .pricing-table .table-title {
+  font-weight: 600;
+  text-transform: uppercase;
+}
+body .pricing .pricing-panel-offers .pricing-table .table-header {
+  border-top: 1px solid rgba(0, 0, 0, 0.08);
+}
+body .pricing .pricing-panel-offers .pricing-table .row {
+  border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+  border-left: 1px solid rgba(0, 0, 0, 0.08);
+  border-right: 1px solid rgba(0, 0, 0, 0.08);
+  box-shadow: 0 0 49px 0 rgba(0, 0, 0, 0.11);
+}
+body .pricing .pricing-panel-offers .pricing-table .row div {
+  padding: 20px;
+  letter-spacing: 1px;
+}
+body .pricing .pricing-panel-offers .pricing-table .row div:nth-child(2) {
+  border-left: 1px solid rgba(0, 0, 0, 0.08);
+  border-right: 1px solid rgba(0, 0, 0, 0.08);
+}
+body .pricing .pricing-panel hr {
+  border-top: 1px solid #347ba3 !important;
+}
+body .pricing .pricing-panel .title {
+  font-family: "Montserrat", sans-serif;
+  font-size: 30px;
+  line-height: 26px;
+  font-weight: 600;
+  letter-spacing: 2px;
+  padding: 10px;
+}
+body .pricing .pricing-panel li {
+  font-size: 14px;
+  letter-spacing: 1px;
+  line-height: 15px;
+  color: #caecff;
+  font-family: "Montserrat", sans-serif;
+  position: relative;
+  padding-top: 20px;
+}
+body .pricing .pricing-panel .panel-buttons {
+  position: relative;
+  bottom: -5px;
+}
+body .pricing-box-backgound-left {
+  border-bottom-left-radius: 25px;
+  border-bottom-right-radius: 25px;
+  background: #0a3f5c;
+  background: -moz-linear-gradient(15deg, #0a3f5c 0%, #0b405c 23%, #06486d 50%, #265d7a 79%, #265d7a 100%);
+  background: -webkit-gradient(left bottom, right top, color-stop(0%, #0a3f5c), color-stop(23%, #0b405c), color-stop(50%, #06486d), color-stop(79%, #265d7a), color-stop(100%, #265d7a));
+  background: -webkit-linear-gradient(45deg, #0a3f5c 0%, #0b405c 23%, #06486d 50%, #265d7a 79%, #265d7a 100%);
+  background: -o-linear-gradient(15deg, #0a3f5c 0%, #0b405c 23%, #06486d 50%, #265d7a 79%, #265d7a 100%);
+  background: -ms-linear-gradient(15deg, #0a3f5c 0%, #0b405c 23%, #06486d 50%, #265d7a 79%, #265d7a 100%);
+  background: linear-gradient(15deg, #0a3f5c 0%, #0b405c 23%, #06486d 50%, #265d7a 79%, #265d7a 100%);
+}
+body .pricing-box-background-right {
+  border-bottom-left-radius: 25px;
+  border-bottom-right-radius: 25px;
+  background: #22536e;
+  background: -moz-linear-gradient(15deg, #22536e 0%, #1c638a 23%, #2b7299 50%, #519cc4 79%, #519cc4 100%);
+  background: -webkit-gradient(left bottom, right top, color-stop(0%, #22536e), color-stop(23%, #1c638a), color-stop(50%, #2b7299), color-stop(79%, #519cc4), color-stop(100%, #519cc4));
+  background: -webkit-linear-gradient(15deg, #22536e 0%, #1c638a 23%, #2b7299 50%, #519cc4 79%, #519cc4 100%);
+  background: -o-linear-gradient(15deg, #22536e 0%, #1c638a 23%, #2b7299 50%, #519cc4 79%, #519cc4 100%);
+  background: -ms-linear-gradient(15deg, #22536e 0%, #1c638a 23%, #2b7299 50%, #519cc4 79%, #519cc4 100%);
+  background: linear-gradient(15deg, #22536e 0%, #1c638a 23%, #2b7299 50%, #519cc4 79%, #519cc4 100%);
+}
+body .freetrial-panel li {
+  font-size: 14px;
+  letter-spacing: 1px;
+  line-height: 15px;
+  color: #777777;
+  font-family: "Montserrat", sans-serif;
+  position: relative;
+  padding-top: 20px;
+}
+body .freetrial-panel li a {
+  color: #27cbff;
+}
+body .form-panel {
+  padding-top: 30px;
+  border-radius: 28px;
+  box-shadow: 2.5px 4.33px 49px rgba(0, 0, 0, 0.11);
+  background-color: #ffffff;
+}
+body .form-panel .form-title {
+  font-size: 30px;
+  letter-spacing: 1px;
+  line-height: 30px;
+  font-family: "Montserrat";
+  font-weight: bold;
+  text-align: center;
+  text-transform: uppercase;
+}
+body .form-panel .form-subtitle {
+  color: #FF9000;
+  text-align: center;
+  font-size: 14px;
+  font-family: "Montserrat";
+}
+body .form-panel .panel-footer {
+  background-color: transparent !important;
+}
+body .form-panel .contact--form input[type=text],
+body .form-panel .contact--form textarea {
+  width: 100%;
+  height: 46px;
+  border-radius: 6px !important;
+  box-shadow: 2.5px 4.33px 5px rgba(0, 0, 0, 0.04);
+  background-color: #ffffff;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  font-family: "Montserrat";
+  font-size: 15px;
+  color: #909090;
+}
+body .form-panel .contact--form ::placeholder {
+  font-family: "Montserrat";
+  font-size: 15px;
+  color: #909090;
+}
+body .form-panel .contact--form select {
+  width: 479px;
+  height: 112px;
+  border-radius: 6px;
+  box-shadow: 2.5px 4.33px 5px rgba(0, 0, 0, 0.04);
+  background-color: #ffffff;
+  border: 1px solid rgba(0, 0, 0, 0.08) !important;
+  padding: 0;
+}
+body .form-panel .contact--form option {
+  width: 491px;
+  height: 37px;
+  box-shadow: 2.5px 4.33px 5px rgba(0, 0, 0, 0.02);
+  background-color: #ffffff;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  border-right: none !important;
+  border-left: none !important;
+  font-family: "Montserrat";
+  font-size: 15px;
+  padding: 7px;
+}
+body .form-panel .contact--form textarea {
+  resize: none !important;
+}
+body .form-panel .registration--form {
+  margin: 30px;
+}
+body .form-panel .registration--form select {
+  width: 100%;
+  height: 46px;
+  border-radius: 6px !important;
+  box-shadow: 2.5px 4.33px 5px rgba(0, 0, 0, 0.04);
+  background-color: #ffffff;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  font-family: "Montserrat";
+  font-size: 15px;
+  color: #909090;
+}
+body .form-panel .registration--form table tbody tr td {
+  font-size: 15px;
+  letter-spacing: 1px;
+  line-height: 26px;
+  color: #777777;
+  font-family: "Montserrat";
+}
+body .form-panel .registration--form table tbody tr td input[type=radio]:checked {
+  background-color: red;
+  color: cyan;
+}
+body .no-background {
+  box-shadow: none !important;
+  background-color: transparent !important;
+}
+body .contact-info {
+  padding-top: 500px;
+}
+body .contact-info .title {
+  font-size: 30px;
+  letter-spacing: 1px;
+  line-height: 26px;
+  color: #4a5e71;
+  font-family: "Montserrat";
+  padding-left: 15px;
+  font-weight: 300 !important;
+}
+body .contact-info .subtitle {
+  font-size: 20px;
+  letter-spacing: 1px;
+  line-height: 26px;
+  color: #ff9c00;
+  font-family: "Montserrat";
+  font-weight: bold;
+}
+body .contact-info .subtitle i {
+  padding-right: 10px;
+  min-width: 30px;
+  text-align: center;
+}
+body .contact-info .contact--p {
+  padding-bottom: 0;
+  padding-left: 0.5rem;
+  padding-right: 0.5rem;
+  padding-top: 0.5rem;
+  font-size: 16px;
+  letter-spacing: 1px;
+  line-height: 16px;
+  color: #788790;
+  font-family: "Montserrat";
+}
+body .account-form input,
+body .account-form select {
+  margin-bottom: 10px;
+}
+body .courses--list ul {
+  list-style-type: none;
+  padding-left: 40px;
+}
+body .courses--list li {
+  font-size: 14px;
+  letter-spacing: 1px;
+  line-height: 15px;
+  color: #8da0af !important;
+  font-family: "Montserrat", sans-serif;
+  position: relative;
+  padding-top: 20px;
+}
+body .courses--list li a {
+  font-size: 14px;
+  letter-spacing: 1px;
+  line-height: 15px;
+  color: #8da0af !important;
+  font-family: "Montserrat", sans-serif;
+  position: relative;
+  padding-top: 20px;
+}
+body .courses--list li:before {
+  content: '';
+  position: absolute;
+  top: 30px;
+  left: -25px;
+  width: 10px;
+  height: 10px;
+  border-radius: 5px;
+  background-color: #27cbff;
+}
+body .essentialsSection .title {
+  font-size: 30px;
+  font-family: "Montserrat", sans-serif;
+  font-weight: 600;
+}
+body .essentialsSection .subtitle {
+  color: #3898cf;
+  font-family: "Montserrat", sans-serif;
+  font-size: 22px !important;
+}
+body .info-panel {
+  background-color: white;
+  border-radius: 25px;
+  padding: 30px;
+  box-shadow: 2.5px 4.33px 49px rgba(0, 0, 0, 0.11);
+  margin-bottom: 20px;
+}
+body .info-panel .title {
+  font-size: 30px;
+  letter-spacing: 1px;
+  line-height: 26px;
+  color: #4a5e71;
+  font-family: "Montserrat";
+  padding-left: 15px;
+  font-weight: 300 !important;
+}
+body .info-panel ul {
+  list-style-type: none;
+  padding-left: 40px;
+}
+body .info-panel li {
+  font-size: 14px;
+  letter-spacing: 1px;
+  line-height: 15px;
+  color: #8da0af !important;
+  font-family: "Montserrat", sans-serif;
+  position: relative;
+  padding-top: 20px;
+}
+body .info-panel li a {
+  font-size: 14px;
+  letter-spacing: 1px;
+  line-height: 15px;
+  color: #8da0af !important;
+  font-family: "Montserrat", sans-serif;
+  position: relative;
+  padding-top: 20px;
+  text-decoration: underline;
+}
+body .info-panel li:before {
+  content: '';
+  position: absolute;
+  top: 20px;
+  left: -25px;
+  width: 10px;
+  height: 10px;
+  border-radius: 5px;
+  background-color: #27cbff;
+}
+body .info-panel .text-content {
+  color: #8da0af;
+  font-family: "Montserrat", sans-serif;
+  font-size: 16px;
+  margin: 15px;
+}
+body .info-panel .panel-primary > .panel-heading {
+  background-color: #00485F;
+  border-color: #00485F;
+}
+body .info-panel .offer-subtitle {
+  color: #3898cf;
+  font-size: 16px;
+  font-weight: 500;
+}
+body .info-panel .offer-title {
+  color: #0d699e;
+  font-size: 20px;
+  font-weight: 600;
+}
+body .courses--course {
+  border-radius: 25px;
+  box-shadow: 0px 5px 49px 0px rgba(0, 0, 0, 0.11);
+}
+body .courses--course .courses--link {
+  font-size: 24px;
+  letter-spacing: 1px;
+  line-height: 30px;
+  font-family: "Montserrat";
+  font-weight: bold;
+  text-align: center;
+  text-transform: uppercase;
+}
+body #tag-search {
+  position: relative;
+  min-height: 70px;
+  background-color: white;
+  border: 2px solid #00679e;
+}

@@ -1,0 +1,151 @@
+﻿function PurchaseFinished(jdata) {
+    opsgility.hideLoadingIcon("body")
+    var data = $.parseJSON(jdata);
+    if (data.IsError == true) {
+        opsgility.showNotificationMessage("Lab Credits Purchase", data.ErrorMessage, false);
+    }
+    else {
+        opsgility.showNotificationMessage("Lab Credits Purchase", "Lab Credit Purchase Successful", true);
+    }
+    $("body").trigger("credits-purchase-finished", data.Amount);
+}
+
+$(document).ready(function() {
+    Stripe.setPublishableKey($('#publishableKey', $("body")).val());
+    var defaultRangeValidator = $.validator.methods.range;
+    $.validator.setDefaults({ 
+        ignore: [],
+    });
+
+    $.validator.addMethod('stripevalidation', function (value, element, params) {
+        var useExistingCard = $("#use-existing-card", $("body")).val().toLowerCase();
+        if (useExistingCard == "false") {
+            var validationtype = $(element).attr("data-val-stripevalidation-validationtype");
+            switch (validationtype) {
+                case "expiration":
+                    if (value == undefined || value.length != 7) return false;
+                    var month = parseInt(value.substring(0, 2));
+                    var year = parseInt(value.substring(3, 7));
+                    return Stripe.card.validateExpiry(month, year);
+                    break;
+                case "number":
+                    return Stripe.card.validateCardNumber(value);
+                case "cvc":
+                    return Stripe.card.validateCVC(value);
+            }
+        }
+        else {
+            return true;
+        }
+    }, '');
+    
+    $.validator.addMethod('requiredif', function (value, element, params) {
+        var otherElementName = $(element).attr("data-val-requiredif-parameter");
+        var otherElementValue = $("[name='" + otherElementName + "']", $("body")).val().toLowerCase();
+        var requiredIfValue = $(element).attr("data-val-requiredif-value").toLowerCase();
+        var condition = $(element).attr("data-val-requiredif-condition");
+        if ((condition == "==" && otherElementValue.toString() == requiredIfValue.toString()) ||
+            (condition == "!=" && otherElementValue.toString() != requiredIfValue.toString())) {
+            return value != null && value != "";
+        }
+        return true;
+    }, '');
+
+    $.validator.unobtrusive.adapters.add('stripevalidation', function (options) {
+        options.rules["stripevalidation"] = "#" + options.element.name.replace('.', '_');
+        options.messages["stripevalidation"] = options.message;
+    });
+
+    $.validator.unobtrusive.adapters.add('requiredif', function (options) {
+        options.rules["requiredif"] = "#" + options.element.name.replace('.', '_'); 
+        options.messages["requiredif"] = options.message;
+    });
+
+    $.validator.methods.range = function (value, element, param) {
+        if ($(element).attr("isBool") === 'true') {
+            return value == "true";
+        } else {
+            return defaultRangeValidator.call(this, value, element, param);
+        }
+    }    
+
+    var validator = $("#labCreditsPurchaseForm", $("body")).validate();
+
+    $("body").off("keyup", "#purchase-amount") 
+    $("body").on("keyup", "#purchase-amount", function() {
+        var amount = $(this).val();
+        if (amount > 0) {
+            $.get('/Manage/LabCreditsPurchasePrice?amount=' + amount).then(function(response) {
+                $("#credits-purchase-sum-total").html(response);
+                $(".credits-purchase-sum").removeClass("hide");
+            })
+        }
+        else {
+            $(".credits-purchase-sum").addClass("hide");
+        }
+    })
+
+    $("body").off("change", "[cardOriginalValue]");
+    $("body").on("change", "[cardOriginalValue]", function() {
+        var useExistingCard = true;
+        $.each($("[cardOriginalValue]", $("body")), function() {
+            if ($(this).val() != $(this).attr("cardOriginalValue")) {
+                useExistingCard = false;
+            }
+        })
+        $("#use-existing-card", $("body")).val(useExistingCard);
+    });
+
+    $("body").off("click", "[labcreditpurchase-submit-trigger]");
+    $("body").on("click", "[labcreditpurchase-submit-trigger]", function() {
+        if ($("#labCreditsPurchaseForm", $("body")).valid() == true) {
+            if ($("#use-existing-card", $("body")).val().toLowerCase() == "false") {
+                Stripe.card.createToken({
+                    number: $("#credit-card-number", $("body")).val(),
+                    exp_month: $("#credit-card-expiration", $("body")).val().substring (0, 2),
+                    exp_year: $("#credit-card-expiration", $("body")).val().substring (3, 7),
+                    cvc: $("#credit-card-cvc", $("body")).val(),
+                    name: $("#credit-card-name", $("body")).val(),
+                    address_line1: $("#billing-address-line1", $("body")).val(),
+                    address_line2: $("#billing-address-line2", $("body")).val(),
+                    address_city: $("#billing-address-city", $("body")).val(),
+                    address_state: $("#billing-address-state", $("body")).val(),
+                    address_zip: $("#billing-address-zip", $("body")).val(),
+                    address_country: ""
+                }, function (status, response) {
+                    if (response.error != null) {
+                        var error = response.error.message;
+                        $("#card-creation-error", $("body")).html(error);
+                        $("#card-creation-error-wrapper", $("body")).removeClass("hide");
+                    }
+                    else {
+                        var token = response.id;
+                        opsgility.showLoadingIcon("body");
+                        $("#card-creation-error-wrapper", $("body")).addClass("hide");
+                        $("#credit-card-token", $("body")).val(token);
+                        $("#labCreditsPurchaseForm", $("body")).submit();
+                    }
+                });
+            }
+            else {
+                opsgility.showLoadingIcon("body");
+                $("#card-creation-error-wrapper", $("body")).addClass("hide");
+                $("#labCreditsPurchaseForm", $("body")).submit();
+            }
+        }
+    })
+
+    $.each($("[data-val-stripevalidation]", $("body")), function() {
+        var err = $(this).attr("data-val-stripevalidation-errormessage");
+        $(this).rules("add", { stripevalidation: err, messages: { stripevalidation: err } });
+    });
+    $.each($("[data-val-requiredif]", $("body")), function() {
+        var err = $(this).attr("data-val-requiredif");
+        $(this).rules("add", { requiredif: err, messages: { requiredif: err } });
+    });
+    $.each($("[data-val-licensesvalidation]", $("body")), function() {
+        var err = $(this).attr("data-val-licensesvalidation");
+        $(this).rules("add", { licensesvalidation: err, messages: { licensesvalidation: err } });
+    });
+});
+

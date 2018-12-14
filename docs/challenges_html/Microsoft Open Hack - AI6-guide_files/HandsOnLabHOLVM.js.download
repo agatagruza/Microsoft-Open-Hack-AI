@@ -1,0 +1,189 @@
+﻿var ModuleAttachment = { Name: "", Description: "" };
+
+var handsOnLabVM = {
+    LabInfo: ko.observable(ModuleAttachment),
+    ContentUrl: ko.observable(),
+    CourseId: ko.observable(),
+    CourseModuleId: ko.observable(),
+    HasCompletedLab: ko.observable(false),
+    HideCheckBox: ko.observable(false),
+    NextExerciseAccessible: ko.observable(false),
+
+    updateExerciseCompletition: function(id) {
+        $.get('/Course/CheckExerciseStatus?courseId=' + handsOnLabVM.CourseId() + '&moduleAttachmentId=' + handsOnLabVM.LabInfo().Id + '&classroomId=' + moduleViewModel.classroomId).then(function (data) {
+            switch (data) {
+                case "-1":
+                    $("#labfooter-message").html("<span class='fa fa-spinner fa-spin'></span>&nbsp;Waiting for approval");
+                    handsOnLabVM.HideCheckBox(true);
+                    break;
+                case "1":
+                    $("#labfooter-message").html("Approved");
+                    handsOnLabVM.HideCheckBox(true);
+                    break;
+                default:
+                    handsOnLabVM.HideCheckBox(false);
+                    break;
+            }
+        });
+    },
+
+    loadHandsOnLab: function (id, courseId, courseModuleId, IsLabCompleted) {
+        handsOnLabVM.CourseId(courseId);
+        handsOnLabVM.CourseModuleId(courseModuleId);
+        $.get('/Course/IsLabCompleted?id=' + id).done(function (response) {
+            IsLabCompleted = response == "True";
+            ajaxRequest.makeAPIRequest("/Module/GetHandsOnLabInfo", "GET", { id: id }, function (data) {
+                handsOnLabVM.LabInfo(data);
+                handsOnLabVM.LoadContent(handsOnLabVM.LabInfo().Id, IsLabCompleted);
+                handsOnLabVM.HasCompletedLab(IsLabCompleted);
+                moduleViewModel.adjustExerciseButtons();
+                $.each(moduleViewModel.labEndStatus, function () {
+                    if (this.exerciseId == handsOnLabVM.LabInfo().Id && this.requestStatus == 0) {
+                        $("#labfooter-message").html("<span class='fa fa-spinner fa-spin'></span>&nbsp;Pending for approval");
+                        handsOnLabVM.HideCheckBox(true);
+                    }
+                    //else {
+                    //    handsOnLabVM.HideCheckBox(false);
+                    //}
+                });
+                handsOnLabVM.updateExerciseCompletition(id);
+            });
+        });
+    },
+
+    FeedbackAndUpdateLab: function () {
+        $.get("/Course/GetFeedbackContentIfRequired?id=" + handsOnLabVM.LabInfo().Id).done(function (pview) {
+            if (pview && pview.length > 0) {
+                $("[submit-feedback]", $("#feedbackprovidermodal")).attr("submit-feedback", "holvmupdatelab");
+                $(".modal-body", $("#feedbackprovidermodal")).html(pview);
+                $("#feedbackprovidermodal").modal("show");
+            }
+            else {
+                handsOnLabVM.UpdateLab();
+            }
+        });
+    },
+
+    UpdateLab: function () {
+        ajaxRequest.makeAPIRequest("/Module/SaveModuleActivity?classroomId=" + moduleViewModel.classroomId, "POST",
+        ko.toJSON({
+            CourseModuleId: handsOnLabVM.CourseModuleId(),
+            ModuleAttachmentId: handsOnLabVM.LabInfo().Id,
+            ActivityStateName: "Completed"
+        }), function () {
+            ajaxRequest.makeAPIRequest("/Course/GetTrainingMaterialCode", "GET", { id: handsOnLabVM.CourseId() }, function (result) {
+                //Redirect to Course Module page
+                $("#handsOnLabDialog").modal('hide');
+                moduleViewModel.loadCourseModulesData(result, handsOnLabVM.CourseModuleId());
+                if (moduleViewModel.isGated == true && moduleViewModel.getLastExerciseId() == handsOnLabVM.LabInfo().Id) {
+                    $("#labfooter-message").html("<span class='fa fa-spinner fa-spin'></span>&nbsp;Pending for approval");
+                    handsOnLabVM.HideCheckBox(true);
+                }
+                else {
+                    handsOnLabVM.updateExerciseCompletition(handsOnLabVM.LabInfo().Id);
+                    handsOnLabVM.HasCompletedLab(true);
+                }
+                moduleViewModel.IsCourseCompleted();
+            });
+        });
+    },
+    LoadContent: function (id, markascompleted) {
+        
+        var activityStateName = markascompleted ? "Completed" : "Started";
+        ajaxRequest.makeAPIRequest("/Module/GetLabContentLabs", "GET", { id: id }, function (data) {
+            handsOnLabVM.LastAttachment = id;
+            handsOnLabVM.LabInfo(data);
+            handsOnLabVM.SetNextExerciseAccessibility();         
+            //handsOnLabVM.GetContentUrl(data.Url);
+            handsOnLabVM.DownloadContent(id);
+            $("#labdetails").removeClass('labdetails_without_topmargin').addClass('labdetails_with_topmargin');
+            moduleViewModel.resetTimelineHeight();
+        });
+        ajaxRequest.makeAPIRequest("/Module/SaveModuleActivity?classroomId=" + moduleViewModel.classroomId, "POST",
+        ko.toJSON({
+            CourseModuleId: handsOnLabVM.CourseModuleId(),
+            ModuleAttachmentId: id,
+            ActivityStateName: activityStateName
+            }), null);
+        var isOpenHack = $("#isOpenHack").val();
+        if (markascompleted != true && isOpenHack != "true") {
+            var exercises = $(".module-exercise");
+            var idExercise = handsOnLabVM.LabInfo().Id;
+            if (idExercise) {
+                for (var i = 0; i < exercises.length; i++) {
+                    if (exercises[i].id == idExercise) {
+                        if (i == exercises.length - 1) {
+                         //   $("#reminder").modal();
+                        }
+                    }
+                }
+            }
+        }
+
+
+    },
+    RepeatLastLoad: function() {
+        var id = handsOnLabVM.LastAttachment;
+        ajaxRequest.makeAPIRequest("/Module/GetLabContentLabs", "GET", { id: id }, function (data) {
+            handsOnLabVM.LastAttachment = id;
+            handsOnLabVM.LabInfo(data);
+            handsOnLabVM.SetNextExerciseAccessibility();         
+            //handsOnLabVM.GetContentUrl(data.Url);
+            handsOnLabVM.DownloadContent(id);
+            $("#labdetails").removeClass('labdetails_without_topmargin').addClass('labdetails_with_topmargin');
+            moduleViewModel.resetTimelineHeight();         
+        });
+    },
+
+    GetContentUrl: function(url) {
+        if (url != null && url != undefined && url.length > 0) {
+            var index = url.lastIndexOf('/');
+            var baseurl = url.substring(0, index + 1);
+            $.get("/Course/GetUrl?url=" + url).done(function(result) {  
+                $("#handsonlabdiv").html(result); 
+                $.each($("[src]", $("#handsonlabdiv")), function() {
+                    var path = $(this).attr("src");
+                    $(this).attr("src", baseurl + path);
+                })
+            });
+        }
+    },
+
+    DownloadContent: function(id) {
+        if (id != null && id != undefined) {
+            $.get("/Course/DownloadUrl?courseId=" + handsOnLabVM.CourseId() + "&moduleAttachmentId=" + id).done(function(result) {  
+                $("#handsonlabdiv").html(result);
+                $.each($("a", $("#handsonlabdiv")), function () {
+                    $(this).attr("target", "_blank");
+                });
+                $.each($("[src]", $("#handsonlabdiv")), function() {
+                    var element = $(this);
+                    var filename = $(element).attr("src");
+                    $.get("/Course/DownloadUrl?courseId=" + handsOnLabVM.CourseId() + "&moduleAttachmentId=" + id + "&filename=" + filename).done(function(result) {
+                        $(element).attr("src", result);
+                    })
+                })
+            });
+        }
+    },
+
+    SetNextExerciseAccessibility: function () {
+        var moduleAttachmentId = handsOnLabVM.LastAttachment;
+        if (moduleAttachmentId == undefined) { return; }
+        var courseId = handsOnLabVM.CourseId();
+        var classroomId = moduleViewModel.classroomId;
+        $.get("/Course/GetButtonsForCoursePlayer?moduleAttachmentId=" + moduleAttachmentId + "&courseId=" + courseId + "&classroomId=" + classroomId).done(function (pview) {
+            $("[exercise-buttons]").html(pview);
+        })
+
+        //if (moduleViewModel.nextExerciseAllowed() && handsOnLabVM.HasCompletedLab()) {
+        //    handsOnLabVM.NextExerciseAccessible(true);
+        //}
+        //else {
+        //    handsOnLabVM.NextExerciseAccessible(false);
+        //}
+    }
+}
+
+
+

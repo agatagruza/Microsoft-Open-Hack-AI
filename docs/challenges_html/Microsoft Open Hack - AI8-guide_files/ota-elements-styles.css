@@ -1,0 +1,138 @@
+﻿
+/*Moved form elements css from style.css to here.*/
+input, textarea {
+  border-radius: 0 !important;
+  /*-webkit-appearance: none;*/
+     -moz-appearance: none;
+     appearance: none; 
+}
+
+input[type=checkbox] {
+    -moz-appearance: checkbox !important;
+    min-height: 15px;
+    margin-right: 5px;
+}
+
+/*buttons*/
+.btn-round {
+    border-radius: 8px !important;
+}
+.btn-color-white{
+    color: white !important;
+}
+.btn-blue {
+    background-color: #0d71ba !important;
+}
+
+.course--tabs li a:active, .course--tabs li a:hover, .course--tabs li a:focus {
+    background-color: #0d71ba !important;
+}
+
+
+button, input[type="submit"], a.btn__link {
+    height: 5rem;
+    font-size: 1.8rem;
+    background-color: white;
+    border: none;
+    text-transform: capitalize !important;
+    /* min-width: 18rem;*/
+    color: white;
+    -webkit-transition: box-shadow .1s ease;
+    transition: box-shadow .1s ease;
+}
+  button:hover, input[type="submit"]:hover, a.btn__link:hover {
+    box-shadow: 0 0.8rem 0.8rem rgba(0, 0, 0, 0.25); }
+  button:focus, input[type="submit"]:focus, a.btn__link:focus {
+    outline: none;
+    box-shadow: 0 0.8rem 0.8rem rgba(0, 0, 0, 0.25); }
+  button.btn__large, input[type="submit"].btn__large, a.btn__link.btn__large {
+    height: 6rem;
+    min-width: 27rem; }
+  button.btn__white, input[type="submit"].btn__white, a.btn__link.btn__white {
+    color: #453a3e;
+    font-weight: 500; }
+    button.btn__white:active, input[type="submit"].btn__white:active, a.btn__link.btn__white:active {
+      background-color: #f3f3f3; }
+  button.btn__orange, input[type="submit"].btn__orange, a.btn__link.btn__orange {
+    background-color: #f37049; }
+  button.btn__yellow, input[type="submit"].btn__yellow, a.btn__link.btn__yellow {
+    background-color: #f9b24b; }
+  button.btn__purple, input[type="submit"].btn__purple, a.btn__link.btn__purple {
+    background-color: #69555c;
+    color: white; }
+  button.btn__blue, input[type="submit"].btn__blue, a.btn__link.btn__blue {
+    background-color: #0d71ba;
+    color: white; }
+  button.btn__on-white, input[type="submit"].btn__on-white, a.btn__link.btn__on-white {
+    box-shadow: 0 2px 2px rgba(0, 0, 0, 0.25); }
+  button.btn__link, input[type="submit"].btn__link, a.btn__link.btn__link {
+    text-align: center;
+    /*padding-top: 13px;*/
+    line-height: 2.75;
+    text-transform: capitalize;
+    font-weight: 500;
+    display: block;
+    width: 0; }
+    button.btn__link:hover, button.btn__link:active, button.btn__link:focus, input[type="submit"].btn__link:hover, input[type="submit"].btn__link:active, input[type="submit"].btn__link:focus, a.btn__link.btn__link:hover, a.btn__link.btn__link:active, a.btn__link.btn__link:focus {
+      text-decoration: none; }
+
+    @media screen and (max-width: 768px) {
+  button.btn__full-width__sm, input[type="submit"].btn__full-width__sm, a.btn__link.btn__full-width__sm {
+    width: 100%; } }
+
+@media screen and (max-width: 480px) {
+  button.btn__full-width__xs, input[type="submit"].btn__full-width__xs, a.btn__link.btn__full-width__xs {
+    width: 100%; } }
+
+/*Modal dialog*/
+.modal-dialog {
+  max-width: 86rem;
+  margin: 7rem auto;
+  width: calc(100% - 4rem); }
+
+.subscription-container {
+    border-bottom: 1px solid #f37049;
+    padding-top: 20px !important;
+}
+.credit-purchase-background {
+    background-color: #f5f5f5 !important;
+    background-image: none;
+}
+.logo-ops{
+    text-align: center;
+    padding-top: 10px;
+}
+.close {
+    z-index: 99999;
+}
+.exercises {
+    font-size: 1.5rem;
+    padding-left: 4px;
+    padding-right: 4px;
+}
+.course--tabs li .exercises:hover {
+    background-color: transparent !important;
+}
+.vm-background{
+    background-color: #71abd4;
+    color: white;
+}
+.table-borders th
+{
+    border: 1px solid black !important;
+         
+}
+.table-borders td 
+{
+    border: 1px solid black !important;
+}
+.module-exercise, .module-exercise span {
+    color: white !important;
+    cursor: pointer;
+}
+
+    .module-exercise.exercise-disabled, .module-exercise.exercise-disabled span {
+        color: #777 !important;
+        cursor: not-allowed;
+    }
+

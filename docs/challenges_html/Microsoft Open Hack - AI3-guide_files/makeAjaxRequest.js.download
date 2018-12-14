@@ -1,0 +1,227 @@
+﻿// the class to work with all the ajax request and
+var ajaxRequest =
+{
+    makeRequest: function (requestUrl, type, contextData, successCallback, errorCallback, dataType, blockUI, isAsync) {
+        
+        requestUrl = opsgility.getBaseURL() + requestUrl;
+        if (dataType == null) {
+            dataType = "json";
+        }
+
+        if (blockUI == null) {
+            blockUI = false;
+        }
+
+        if (isAsync == null) {
+            isAsync = true;
+        }
+
+        //ajaxRequest.showBusyIndicator();
+        switch ((type || '').toUpperCase()) {
+            case "GET":
+                $.ajax({
+                    async: isAsync,
+                    type: "GET",
+                    cache: false,
+                    contentType: "application/json; charset=utf-8",
+                    url: requestUrl,
+                    data: contextData,
+                    dataType: dataType,
+                    success: function (response) {
+
+                        if (jQuery.type(response) == "string" && (response.replace(/\"/g, "") == "_Logon_")) {                          
+                                ajaxRequest.redirectToHomePage();
+                            //ajaxRequest.redirectToHomePageConfirmed();
+                        } else {
+
+                            if (successCallback) { successCallback(response); }
+                        }
+                    },
+                    error: function (response) {
+                        //Track all errors to apllication insight.
+                        var message = response.statusText + ", url: " + requestUrl;
+                        appInsights.trackTrace(message);
+                    },
+                    complete: function (jqXHR, textStatus) { ajaxRequest.hideBusyIndicator(); },
+                    blockUI: blockUI
+                });
+                break;
+            case "POST":
+                // Make POST http ajax request
+                $.ajax({
+                    async: isAsync,
+                    type: "POST",
+                    cache: false,
+                    contentType: "application/json; charset=utf-8",
+                    url: requestUrl,
+                    data: JSON.stringify(contextData),
+                    dataType: dataType,
+                    success: function (response) {
+                        if (jQuery.type(response) == "string" && (response.replace(/\"/g, "") == "_Logon_")) {
+                            ajaxRequest.redirectToHomePage();
+                            //ajaxRequest.redirectToHomePageConfirmed();
+                        } else {
+                            if (successCallback) {
+                                successCallback(response);
+                            }
+                        }
+                    },
+                    error: function (response) {
+                        //Track all errors to apllication insight.
+                        var message = response.statusText + ", url: " + requestUrl;
+                        appInsights.trackTrace(message);
+                    },
+                    statusCode:
+                    {
+                        400: function (data) {
+                            var validationResult = $.parseJSON(data.responseText);
+                            $.publish("ShowValidationError", [validationResult]);
+                        }
+                    },
+                    complete: function (jqXHR, textStatus) { ajaxRequest.hideBusyIndicator(); },
+                    blockUI: blockUI
+                });
+                break;
+
+        }
+    },
+
+    makeAPIRequest: function (requestUrl, type, contextData, successCallback, errorCallback, dataType, blockUI, isAsync) {
+        var accessToken = $.getCookie('OpsgilityAccessToken');
+        if (blockUI == null) {
+            blockUI = true;
+                }
+
+        if (isAsync == null) {
+            isAsync = true;
+        }
+
+        if (accessToken == null || accessToken.length == 0 || accessToken == 0) {
+            opsgility.getAccessToken(blockUI);
+        }
+
+        requestUrl = opsgility.getBaseURL() + "/api" + requestUrl;
+        if (dataType == null) {
+            dataType = "json";
+        }
+
+        //ajaxRequest.showBusyIndicator();
+        switch ((type || '').toUpperCase()) {
+            case "GET":
+                $.ajax({
+                    async: isAsync,
+                    type: "GET",
+                    cache: false,
+                    contentType: "application/json; charset=utf-8",
+                    url: requestUrl,
+                    data: contextData,
+                    dataType: dataType,
+                    beforeSend: function (request) {
+                        request.setRequestHeader('Authorization', 'Bearer ' + $.getCookie('OpsgilityAccessToken'));
+                    },
+                    success: function (response) {
+
+                        if (jQuery.type(response) == "string" && (response.replace(/\"/g, "") == "_Logon_")) {
+                            ajaxRequest.redirectToHomePage();
+                            //ajaxRequest.redirectToHomePageConfirmed();
+                        } else {
+
+                            if (successCallback) { successCallback(response); }
+                        }
+                    },
+                    error: function (response) {
+                        //Track all errors to apllication insight.
+                        var message = response.statusText + ", url: " + requestUrl;
+                        appInsights.trackTrace(message);
+                    },
+                    statusCode:
+                    {
+                        400: function (data) {
+                        var baseurl = opsgility.getBaseURL();
+                        window.location.href = baseurl + "/Error/ServerError";
+                    },                    
+                    500: function (data) {
+                        var baseurl = opsgility.getBaseURL();
+                        window.location.href = baseurl + "/Error/ServerError";
+                    }
+                    },
+                    complete: function (jqXHR, textStatus) { ajaxRequest.hideBusyIndicator(); },
+                    blockUI: blockUI
+                });
+                break;
+            case "POST":
+                // Make POST http ajax request
+                $.ajax({
+                    async: isAsync,
+                    type: "POST",
+                    cache: false,
+                    contentType: "application/json; charset=utf-8",
+                    url: requestUrl,
+                    data: contextData,
+                    dataType: dataType,
+                    beforeSend: function (request) {
+                        request.setRequestHeader('Authorization', 'Bearer ' + $.getCookie('OpsgilityAccessToken'));
+                    },
+                    success: function (response) {
+                        if (jQuery.type(response) == "string" && (response.replace(/\"/g, "") == "_Logon_")) {
+                            ajaxRequest.redirectToHomePage();
+                            //ajaxRequest.redirectToHomePageConfirmed();
+                        } else {
+                            if (successCallback) {
+                                successCallback(response);
+                            }
+                        }
+                    },
+                    error: function (response) {
+                        //Track all errors to apllication insight.
+                        var message = response.statusText + ", url: " + requestUrl;
+                        appInsights.trackTrace(message);
+                    },
+                    statusCode:
+                    {
+                        400: function (data) {
+                            var validationResult = $.parseJSON(data.responseText);
+                            $.publish("ShowValidationError", [validationResult]);
+                        },
+                        500: function (data) {
+                            var baseurl = opsgility.getBaseURL();
+                            window.location.href = baseurl + "/Error/ServerError";
+                        }
+                    },
+                    complete: function (jqXHR, textStatus) { ajaxRequest.hideBusyIndicator(); },
+                    blockUI: blockUI
+                });
+                break;
+
+        }
+    },
+
+    showBusyIndicator: function () {
+        //        $.blockUI({
+        //            message: '<img style="" src="/asset/busy.gif" />',
+        //            css: { backgroundColor: "transparent", border: 'none' }
+        //        }); ;
+    },
+
+    redirectToHomePage: function () {
+
+
+        var messageData = { "message": "Your session has expired due to inactivity.Please log in again.", "heading": "Session Expired" };
+        opsgility.showAlertNotification(messageData, ajaxRequest.redirectToHomePageConfirmed);
+    },
+
+    redirectToHomePageConfirmed: function () {
+
+        var a = opsgility.getBaseURL()
+        //pathArray = window.location.href.split('/');
+        //protocol = pathArray[0];
+        //host = pathArray[2];
+        //url = protocol + '//' + host;
+        window.location = a[0];
+    },
+       
+    hideBusyIndicator: function () {
+
+        //$.unblockUI();
+    }
+};

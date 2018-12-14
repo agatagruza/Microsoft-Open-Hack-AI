@@ -1,0 +1,187 @@
+﻿loginViewModel = {
+    userName: ko.observable().extend({ required: { message: "Please enter Username" } }),
+    password: ko.observable().extend({ required: { message: "Please enter Password" } }),
+    //userNameDrop: ko.observable().extend({ required: { message: "Please enter Username" } }),
+    //passwordDrop: ko.observable().extend({ required: { message: "Please enter Password" } }),
+
+    returnUrl: ko.observable(),
+    StatusMessage: ko.observable(),
+    rememberme: ko.observable(false),
+
+    subscriptionId:ko.observable(),
+
+    LoginSubmit: function () {
+        var loginData = this;
+        loginData.errors = ko.validation.group(loginData);
+        if (loginData.errors().length == 0) {
+            var data = {
+                "Email": loginViewModel.userName(),
+                "Password": loginViewModel.password(),
+                "ReturnUrl": $('#returnUrl').val(),
+                "RememberMe": $('#Rememberme').is(":checked"),
+                "SubscriptionId": $('#subscriptionLoginId').val(),
+                "SubscriptionInvitationId": $('#subscriptionInvitationLoginId').val(),
+                "SubscriptionGuid": $('#subscriptionGuid_Invitation').val(),
+                "TeamGuid": $('#teamGuid_Invitation').val()
+                
+                //loginViewModel.returnUrl()
+            };
+            ajaxRequest.makeRequest("/Account/PopUpLogin", "POST", data
+              , function (result) {
+                  loginViewModel.loggedInStatus(result);
+              });
+             //$("#loginForm").submit();
+        }
+        else {
+            loginData.errors.showAllMessages(true);
+        }
+    },
+
+    LoginDropSubmit: function () {
+        var $loading     = $('#loginButtonContent');
+
+        $loading.toggle();
+        if ($loading.not(':visible'))
+        {
+            $loading.show();
+            $('#signInDrop').addClass('waitcursor');
+        }
+        // opsgility.blockUI("#loginButtonContent", true);
+        
+        var loginDropData = this;
+        loginDropData.errors = ko.validation.group(loginDropData);
+        if (loginDropData.errors().length == 0) {
+            var data = {
+                //"Email": loginViewModel.userNameDrop(),
+                //"Password": loginViewModel.passwordDrop(),
+                "Email": loginViewModel.userName(),
+                "Password": loginViewModel.password(),
+                "ReturnUrl": $('#returnUrlDrop').val(),
+                "RememberMe": $('#RememberMe').is(":checked"),
+                "SubscriptionId": $('#subscriptionLoginId').val(),
+                "SubscriptionInvitationId": $('#subscriptionInvitationLoginId').val(),
+                "SubscriptionGuid": $('#subscriptionGuid_Invitation').val(),
+                "TeamGuid": $('#teamGuid_Invitation').val()
+            };
+
+            ajaxRequest.makeRequest("/Account/PopUpLogin", "POST", data
+              , function (result) {
+                  loginViewModel.loggedInStatusDrop(result);
+              }, null, null, true);
+        }
+        else {
+            loginDropData.errors.showAllMessages(true);
+            if ($loading.is(':visible')) {
+                $loading.hide();
+                $('#signInDrop').removeClass('waitcursor');
+            }
+        }
+    },
+
+    LoginNewUserSubmit: function () {
+        var loginData = this;
+        loginData.errors = ko.validation.group(loginData);
+        if (loginData.errors().length == 0) {
+            $("#loginFormPage").submit();
+        }
+        else {
+            loginData.errors.showAllMessages(true);
+        }
+    },
+
+    CreateNewSubscription: function () {
+        var baseurl = opsgility.getBaseURL();
+        window.location.href = baseurl + "/Subscription/NewSubscription";
+    },
+
+    loggedInStatus: function (result) {
+        var trainingScheduleId = $('#trainingScheduleId').val();        
+        if (result.IsSuccess == true) {
+            if (trainingScheduleId != null && trainingScheduleId > 0) {
+                var subId = loginViewModel.loadCurrentSubscription();
+                var subscriptionId = loginViewModel.subscriptionId();
+                var baseurl = opsgility.getBaseURL();
+                window.location.href = baseurl + "/TrainingSchedule/TrainingScheduleList?trainingScheduleId=" + trainingScheduleId + "&selectedsubscription=" + subscriptionId;
+            }
+            else {
+                var baseurl = opsgility.getBaseURL();
+                //window.location.href = baseurl + result.ReturnUrl;
+                if (window.location.href.indexOf(result.ReturnUrl) == -1) {
+                    window.location.href = baseurl + result.ReturnUrl;
+                }
+                else {
+                    window.location.href = baseurl;
+                }
+            }
+        }
+        else {
+            loginViewModel.StatusMessage(result.Message);
+            $('#invalidLogin').show();
+        }
+    },
+
+
+    loggedInStatusDrop: function (result) {
+        var $loading = $('#loginButtonContent');
+
+        var trainingScheduleId = $('#trainingScheduleId').val();
+        var mocCourseCode = $('#mocCourseCode').val();
+        if (result.IsSuccess == true) {
+            if (trainingScheduleId != null && trainingScheduleId > 0) {
+                var baseurl = opsgility.getBaseURL();
+                window.location.href = baseurl + "/TrainingSchedule/TrainingScheduleList?trainingScheduleId=" + trainingScheduleId;
+            }
+            else if (mocCourseCode != null && mocCourseCode != "" && mocCourseCode != undefined) {
+                loginViewModel.manageMOCPurchase(mocCourseCode);
+            }
+            else {
+                var baseurl = opsgility.getBaseURL();
+                // not appending the same url and getting a 404
+                if (window.location.href.indexOf(result.ReturnUrl) == -1 && result.ReturnUrl != null) {
+                    window.location.href = baseurl + result.ReturnUrl;
+                }
+                else {
+                    if (result.ReturnUrl) {
+                        window.location = result.ReturnUrl;
+                    } else {
+                        window.location.href = baseurl;
+                    }
+                }
+            }
+            if ($loading.is(':visible')) {
+                $loading.hide();
+                $('#signInDrop').removeClass('waitcursor');
+            }
+        }
+        else {
+            loginViewModel.StatusMessage(result.Message);
+            $('#invalidLoginDrop').show();
+            if ($loading.is(':visible')) {
+                $loading.hide();
+                $('#signInDrop').removeClass('waitcursor');
+            }
+        }
+    },
+
+    forgetPassword: function () {
+        $("#loginDialog").modal('hide');
+        $('#invalidEmail').hide();
+        $("#forgotPasswordDialog").modal('show');
+    },
+
+    //Get Current subscription.
+    loadCurrentSubscription: function () {
+        var SubNameListVM = this;
+        ajaxRequest.makeAPIRequest("/Subscription/GetCurrentSubscriptions", "GET", null, function (result) {
+            if (result.length > 0) {
+                var data = result[0].SubscriptionId;
+                loginViewModel.subscriptionId(data);
+            }
+        },null,null,false,false);
+    },
+
+    manageMOCPurchase: function (courseCode) {
+        var baseurl = opsgility.getBaseURL();
+        window.location.href = baseurl + "/Course/MOCPurchase/" + courseCode;
+    }
+};

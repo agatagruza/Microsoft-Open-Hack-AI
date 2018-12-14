@@ -1,0 +1,70 @@
+﻿var joinMail = {
+
+    initialize: function () {
+        joinMail.attachEvents();
+        joinMail.initializeValidation();
+    },
+
+    initializeValidation: function () {
+        $('#joinNewsLetterForm').validate({
+            rules: {
+                name: { required: true },
+                lastName:{ required: true },
+                emailAddress: { required: true, email: true },
+                CaptchaInputText: {required:true}
+            },
+            messages: {
+                name: { required: "Please Enter First Name" },
+                lastName: { required: "Please Enter Last Name" },
+                emailAddress: {
+                    required: "Email is required.",
+                    email:"Please enter a valid email."
+                },
+                CaptchaInputText: {
+                    required: "Please enter captcha."
+                    }
+            },
+        });
+    },
+
+    attachEvents: function () {
+        $('body').off('click', '.registerButton');
+        $('body').on('click', '.registerButton', function () {
+            $("#joinNewsLetterForm").validate();
+            if ($("#joinNewsLetterForm").valid())
+            {
+                //var data = {
+                //    "Name": "",
+                //    "Email": "",
+                //    "Captcha": "",
+                //    "CaptchaDeText": ""
+                //};
+                //data.Name = $('#name').val();
+                //data.Email = $("#emailAddress").val();
+                //data.Captcha = $("#CaptchaInputText").val();
+                //data.CaptchaDeText = $("#CaptchaDeText").val();
+                ////var dt = JSON.stringify(data)
+                //ajaxRequest.makeRequest("/Home/NewsLetterEmail", "POST", data, function (result) {                
+                //    joinMail.onSucess(result);
+                //});
+                 $("#joinNewsLetterForm").submit();
+                //ajaxRequest.makeRequest("/Home/EmailList", "GET",
+                //    {
+                //        "emailAddress": emailid,
+                //        "captcha": captcha,
+                //        "cap":cap
+                //    }, joinMail.onSucess);
+            } else {
+            }
+        });
+    },
+
+    onSucess: function (result) {
+        if (result.Status == false)
+        {
+           // var position = "right-top";
+            //fm.triggerAction(event, position);
+            $("#captchaError").show();
+        }
+    }
+};

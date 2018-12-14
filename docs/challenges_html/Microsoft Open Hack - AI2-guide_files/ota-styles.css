@@ -1,0 +1,690 @@
+﻿   /*Begin General Styles*/
+        .ota-font-extra-bold {
+            font-weight: 900;
+        }
+        .ota-font-thin {
+            font-weight: 200;
+        }
+        .ota-text-uppercase {
+            text-transform: uppercase;
+        }
+        .ota-text-dark-blue {
+            color: #043649;
+        }
+        .ota-text-orange {
+            color: #f37049;
+        }
+        .ota-text-blue {
+            color: #0078d7;
+        }
+        .ota-text-light-blue {
+            color: #00abec;
+        }
+        .ota-text-dark-gray {
+            color: #453a3e;
+        }
+        .ota-text-black {
+            color: #000;
+        }
+        .ota-text-white {
+            color: #fff;
+        }
+        .ota-page {
+            min-width:300px;
+        } 
+        .ota-short-header {
+            text-align: center;
+            background: url("Images/page-header.jpg") center center no-repeat;
+            background-size: cover;
+            padding-bottom: 1rem;
+            margin-bottom:3rem;
+        }
+        /*.ota-short-header-title {
+            margin-top: 6rem; 
+        }*/
+         .ota-short-header-title h1 {
+            font-weight:900;
+            font-size:5rem; 
+        }
+        .ota-short-header-subtitle {
+            margin-top: 0;
+        }
+        .ota-advisory-btn {
+            margin-top: 10px;
+            margin-bottom: 10px;
+            border-radius: 0 !important;
+            min-width: 12em;
+        }
+        .ota-standard-btn {
+            margin-top: 10px;
+            margin-bottom: 10px;
+            border-radius: 0 !important;
+            min-width: 15em;
+            background-color: #0078d7;
+            color: #fff !important;
+        }
+        .ota-standard-btn:hover {
+            color: #453a3e !important;
+        }
+        .ota-cloud-bottom {
+            background: #fff url("Images/grey-clouds.png") center center no-repeat;
+            background-size: cover;
+            min-height: 70vh;
+            color: white;
+            padding: 3rem 0;
+        }
+        .loader {
+            position: fixed;
+            left: 0px;
+            top: 0px;
+            width: 100%;
+            height: 100%;
+            z-index: 9999;
+            background: url('/Content/Images/spinner.gif') 50% 50% no-repeat rgb(249,249,249);
+        }
+        .list-group li {
+            border:none;
+        }
+        .display4 {
+            font-size:112px;
+            font-weight:lighter;
+        }
+        .display3 {
+            font-size:56px;
+        }
+        .display2 {
+            font-size:45px;
+        }
+        .display1 {
+            font-size:34px;
+        }
+        .headline {
+            font-size:24px;
+        }
+        .heading {
+            font-size:20px;
+        }
+        .subheading {
+            font-size:16px;
+        }
+        .bodybold {
+            font-size:14px;
+            font-weight:bold;
+        }
+        .caption {
+            font-size:12px;
+        }
+        .menuhead {
+            font-size:16px;
+        }
+        .menuitems {
+            font-size:12px;
+        }
+
+        .panel-row-margin-bot {
+            margin-bottom:2em;
+        }
+        /*End General Styles*/
+        
+        /*Begin View Styles*/
+        .ota-home {
+            min-width:300px;
+        }
+        /*End View Styles*/
+        
+        /*Begin Hero Styles*/
+        .ota-hero {
+           /* background: #043649 url("Images/home-hero.jpg") center center no-repeat;*/
+           background: #0d71ba;/* url("Images/class-room.jpg") center center no-repeat;*/
+            color: white;
+            padding: 3rem 15px;
+        }
+        .ota-hero-heading {
+            font-size: 5rem;
+            display: block;
+            margin: 0 10px;
+        }
+        .ota-hero-heading:first-child {
+            margin-top: 6rem;
+            margin-bottom: 1rem;
+        }
+        .ota-hero-heading:last-child {
+            padding-bottom: 1.5rem;
+        }
+        .ota-hero-subheading {
+            font-size: 3rem;
+            display: block;
+            margin-right: 1.5em;
+            margin-left: 1.5em;
+        }
+        .ota-hero-text {
+            font-size: 1rem;
+            display: block;
+            margin-right: 2em;
+            margin-left: 2em;
+        }
+        .ota-hero-divider {
+            width: 65%;
+            height: 4px;
+            background: #f37049;
+            margin: 1rem auto 1rem;
+            position: relative; 
+        }
+        .ota-hero-divider::before, .ota-hero-divider::after {
+            content: '';
+            width: 0.75rem;
+            height: 4px;
+            position: absolute;
+            top: 0;
+            background-color: #f37049; 
+        }
+        .ota-hero-divider::before {
+            left: -1.5rem; 
+        }
+        .ota-hero-divider::after {
+            right: -1.5rem; 
+        }	
+        .ota-hero-btn {
+            margin-top: 10px;
+            margin-bottom: 10px;
+            border-radius: 0 !important;
+            min-width: 12em;
+        }
+        .ota-hero-btn:focus, .ota-hero-btn:hover {
+        }
+        a.ota-hero-panel-home-links:link {
+            color: white;
+            text-decoration: none;
+        }
+        a.ota-hero-panel-home-links:visited {
+            color: white;
+            text-decoration: none;
+        }
+        a.ota-hero-panel-home-links:active {
+            color: white;
+            text-decoration: none;
+        }
+        /*end Hero Styles*/
+
+        /*Begin CloudTop Styles*/
+        .ota-cloud-top {
+            background: url("Images/clouds-top.svg") top center no-repeat, white url("Images/grey-geometry.svg") top center;
+            background-size: contain;
+            min-height: 70vh;
+            color: white;
+            padding: 3rem 0;
+        }
+        .ota-cloud-top::before {
+            content: '';
+            width: 100%;
+            height: 16rem;
+            background-color: #e6e6e5;
+            position: absolute;
+            top: -16rem;
+        }
+        .ota-cloud-top-heading {
+            font-size: 3rem;
+            font-weight: bold;
+            display: block;
+            margin: 0 auto;
+            margin-top: 1em;
+        }
+        .ota-cloud-top-subheading {
+            font-size: 2rem;
+            display: block;
+        }
+        .ota-cloud-top-divider {
+            width: 20%;
+            height: 4px;
+            background: #f37049;
+            margin: 2rem auto 2rem;
+            position: relative;
+        }
+        /*End CloudTop Styles*/
+
+        /*Begin Learning Path Styles*/
+        .ota-path-heading {
+            font-size: 3.5rem;
+            font-weight: 800;
+            display: block;
+            margin: 0 auto;
+            margin-top: 1em;
+        }
+        .ota-path-subheading {
+            font-size: 2rem;
+            display: block;
+            margin-bottom: 3em;
+        }
+        .ota-path-panels {
+            margin-top: 1em;
+            margin-bottom: 1em;
+            padding-left: 1em;
+        }
+        .ota-path-panel-sm {
+             min-height: 150px;
+            padding-left: 10px;
+            padding-right: 10px;
+            margin-bottom: 20px;
+        }
+        .ota-path-panel-body-sm {
+            min-height: 125px;
+            height: 100%;
+            border-style: solid solid hidden solid;
+            border-width: thin thin thin thin;
+            border-color: #e5e1e5;
+        }
+        .ota-path-panel-body-icon-sm {
+            min-height: 75px;
+            height: 100%;
+        }
+        .ota-path-panel {
+            min-height: 300px;
+            padding-left: 10px;
+            padding-right: 10px;
+            margin-bottom: 20px;
+        }
+        .ota-path-panel-body {
+            min-height: 225px;
+            height: 100%;
+            border-style: solid solid hidden solid;
+            border-width: thin thin thin thin;
+            border-color: #e5e1e5;
+        }
+        .ota-path-panel-body-icon {
+            min-height: 200px;
+            height: 100%;
+        }
+        .ota-path-panel-body-label {
+            min-height: 25px;
+            height: 100%;
+            font-size: 2rem;
+            display: block;
+            color: white;
+        }
+        .ota-path-panel-footer {
+            min-height: 75px;
+            height: 100%;
+            box-shadow: 0px 6px 6px -2px #aaaaaa;
+            border-style: solid solid solid solid;
+            border-width: medium thin thin thin;
+            border-color: #e5e1e5;
+            font-size: 2rem;
+            display: block;
+            background-color:white;
+        }
+        .ota-path-panel-footer-text {
+            margin-top: 2rem;
+        }
+        .ota-path-panel-footer-text a:visited, a:active {
+            text-decoration: none;
+            outline: none;
+            color: #453a3e !important;
+        }
+        .ota-path-panel-footer-text a:hover {
+            text-decoration: none;
+            color: #000 !important;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        /*End Learning Path Styles*/
+
+        /*Begin Training Path Styles*/
+        .ota-training-panels {
+            display: block;
+            margin-top: 1em;
+            margin-bottom: 3em;
+            padding-left: 1em;
+            padding-right: 1em;
+        }
+        .ota-training-panel {
+            min-height: 250px;
+            margin-top: 10px;
+            margin-bottom: 10px;
+        }
+        .ota-training-panel-body {
+            min-height: 175px;
+            height: 100%;
+            background-color: #fff;
+            box-shadow: 0px 6px 6px -2px #aaaaaa;
+            border-style: solid solid solid solid;
+            border-width: medium thin thin thin;
+            border-color: #e5e1e5;
+            padding-top: 10px;
+            font-size: 2rem;
+            font-weight: bold;
+        }
+        .ota-training-panel-header {
+            min-height: 75px;
+            height: 100%;
+            background-color: #0078d7;
+            border-style: solid solid hidden solid;
+            border-width: thin thin thin thin;
+            border-color: #e5e1e5;
+            font-size: 2rem;
+            display: block;
+            padding-top: 1em;
+        }
+        .ota-training-panel-body-label {
+            min-height: 25px;
+            height: 100%;
+            font-size: 2rem;
+            display: block;
+            color: white;
+        }
+        /*End Training Path Styles*/
+
+        /*Begin Trainer Path Styles*/
+        .ota-trainers-heading {
+            font-size: 3rem;
+            font-weight: bold;
+            display: block;
+            /*margin: 0 auto;*/
+            margin-top: 1em;
+        }
+        .ota-trainers-subheading {
+            font-size: 2rem;
+            display: block;
+            margin-bottom: 2em;
+            margin-left:2em;
+            margin-right:2em;
+        }
+        .ota-trainers-panels {
+            margin-top: 1em;
+            margin-bottom: 3em;
+            margin-left: 40px;
+            margin-right: 20px;
+        }
+        .ota-trainer-panel {
+            min-height: 375px;
+            padding-left: 10px;
+            padding-right: 10px;
+            margin-bottom: 20px;
+        }
+        .ota-trainer-panel-body {
+            min-height: 225px;
+            height: 100%;
+            border-style: solid solid hidden solid;
+            border-width: thin thin thin thin;
+            border-color: #e5e1e5;
+            background-size: 100% 100%;
+            background-repeat: no-repeat;
+        }
+        .ota-trainer-panel-footer {
+            min-height: 150px;
+            height: 100%;
+            box-shadow: 0px 6px 6px -2px #aaaaaa;
+            border-style: solid solid solid solid;
+            border-width: medium thin thin thin;
+            border-color: #e5e1e5;
+            font-size: 1.5rem;
+            display: block;
+        }
+        .ota-trainer-btn {
+            margin-top: 10px;
+            margin-bottom: 10px;
+            border-radius: 0 !important;
+            min-width: 15em;
+            background-color: #0078d7;
+            color: #fff !important;
+        }
+            .ota-trainer-btn:hover {
+                color: #453a3e !important;
+            }
+        /*End Trainer Path Styles*/
+
+        /*Begin Cloud Plan Styles*/
+        .ota-cloud-plan {
+            background: #e6e6e5 url("Images/home-enterprise-readiness.jpg") center center no-repeat;
+            background-size: cover;
+            min-height: 40vh;
+            color: white;
+            padding: 3rem 0;
+        }
+        .ota-cloud-plan-body {
+            margin: 10px 10px;
+        }
+        .ota-cloud-plan-logo {
+            margin: 10px auto;
+            padding-left: 15px;
+            padding-right: 15px;
+        }
+        /*End Cloud Plan Styles*/
+
+        /*Begin Advisory Service Styles*/
+         .ota-advisory-lg-image {
+            width:100%;
+            margin-top:5rem;
+        }
+        .ota-advisory-services-panel-container {
+            background-color:lightgray;
+        }
+        .ota-advisory-services-panels {
+            margin-top:2rem;
+            margin-bottom:2rem;
+        }
+        .ota-advisory-services-panel {
+
+        }
+        .ota-advisory-services-panel-text {
+            margin-left:1.5rem;
+            margin-right:1.5rem;
+            padding-bottom:1.5rem;
+
+        }
+        .ota-advisory-services-panel-text ul {
+            border-color:none;
+            background-color:#fff;
+        }
+        .ota-advisory-services-panel-img {
+            padding-top:1.5rem;
+        }
+        .ota-advisory-services-panel-img img {
+            width:90%;
+            display: block;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        .ota-cloud-bottom {
+            background: #fff url("Images/grey-clouds.png") center center no-repeat;
+            background-size: cover;
+            min-height: 70vh;
+            color: white;
+            padding: 3rem 0;
+        }
+        /*End Advisory Service Styles*/
+
+        /*Begin Role Based Skill Track Styles*/
+        .ota-tcbr-area {
+            min-height:75px;
+            height:100%;
+            width:100%;
+            background-color:#0078d7;
+            text-align:center;
+        }
+        .ota-tcbr-area h3 {
+            font-size: 2.25rem;
+            float: none;
+            display: inline-block;
+            vertical-align: middle;
+        }
+        .ota-tcbr-areas-container {
+            min-height:75px;
+            height:100%;
+            margin-top:20px;
+        }
+        .ota-tcbr-areas-outer-section {
+            padding-left:5px;
+            padding-right:5px;
+        }
+        .ota-tcbr-areas-inner-section {
+            padding-left:10px;
+            padding-right:10px;
+        }
+        .ota-tcbr-role {
+            height:100px;
+            width:90%;
+            background-color:#e6e6e5;
+            border-right:solid;
+            border-color:#d3d3d3;
+            border-width:10px;
+        }
+        .ota-tcbr-role h3 {
+            font-size: 2.25rem;
+            padding-top:35px;
+            color:#453a3e;
+            text-align:center;
+            cursor: pointer;
+        }
+        .ota-tcbr-level {
+            padding-right:5px;
+            padding-top:5px;
+            min-height:220px;
+            height:100%;
+            background-color:#e6e6e5;
+            margin-bottom:20px;
+        }
+        .ota-tcbr-skill {
+            padding-left:5px;
+            padding-right:15px;
+        }
+        .ota-tcbr-skill-list {
+            list-style-type: none;
+            padding-right:0!important;
+        }
+        .ota-tcbr-skill-list li {
+            background-color:#fff;
+            color:#000;
+            padding-left:10px;
+            padding-right:10px;
+            padding-top:5px;
+            padding-bottom:5px;
+            margin-top:5px;
+            border-right:solid;
+            border-width:5px;
+            border-color:#0078d7;
+            width:100%;
+        }
+        .ota-tcbr-goal {
+            padding-left:5px;
+            padding-right:5px;
+        }
+        .ota-tcbr-goal-list {
+            list-style-type: none;
+            padding-right:0!important;
+        } 
+        .ota-tcbr-goal-list li {
+            background-color:#fff;
+            color:#000;
+            padding-left:10px;
+            padding-right:10px;
+            padding-top:5px;
+            padding-bottom:5px;
+            margin-top:5px;
+            border-right:solid;
+            border-width:5px;
+            border-color:#0078d7;
+            width:100%;
+        }    
+        .ota-tcbr-course {
+            padding-left:5px;
+            padding-right:5px;
+        }   
+        .ota-tcbr-course-list {
+            list-style-type: none;
+            padding-right:0!important;
+        }
+        .ota-tcbr-course-list li {
+            background-color:#fff;
+            color:#000;
+            padding-left:10px;
+            padding-right:10px;
+            padding-top:5px;
+            padding-bottom:5px;
+            margin-top:5px;
+            border-right:solid;
+            border-width:5px;
+            border-color:#0078d7;
+            width:100%;
+        }
+        .ota-tcbr-course-list li > a {
+            text-decoration:underline;
+        }
+        /*End Role Based Skill Track Styles*/
+
+        /*Start CloudReadiness Styles*/
+
+        /*End CloudReadiness Styles*/
+
+        /*Start Partner Styles*/
+
+        /*End Partner Styles*/
+
+        /*Start LearningSolutions Styles*/
+        .ota-ls-header {
+            min-height: 32rem;
+            padding-left:0!important;
+            padding-right:0!important;
+
+            /*
+            text-align: center;
+            background: url("Images/home_perspective.png") left center no-repeat;
+            background-size: cover;
+            min-height: 32rem;
+            margin-bottom:3rem;
+            padding-left:0!important;
+            padding-right:0!important;
+            */
+        }
+        .red {
+            background-image: linear-gradient(rgba(4, 54, 73, 0.90),rgba(4, 54, 73, 0.70)),url(Images/home_perspective.png);
+            background-position:left,center;
+            background-size: cover;
+            background-clip:content-box;
+
+        }
+        .ota-ls-header-overlay {
+
+            /*
+            position:relative;
+		    top:0px;
+            left:0px;
+		    background:#043649;
+		    opacity:0.8;
+            min-height: 34rem;
+            */
+        }
+        /*End LearningSolutions Styles*/
+
+        .tooltip-inner {
+            background-color: #f37049 !important;
+        }
+
+
+        /* Lab Styles */
+
+.labRow {
+    color: black;
+    margin-top: 40px;
+    margin-bottom: 40px;
+}
+.labRow img {
+    width: 150px;
+    height: 150px;
+    margin-top: 40px;
+    margin-bottom: 40px;
+}
+.labcategory {
+    text-align: center;
+    font-size: 18pt;
+    margin-bottom: 15px;
+}
+
+    .labcategory:hover {
+        border: solid 1px #f5f5f5;
+    }
+
+    .labcategory a {
+        text-decoration: none;
+        color: black;
+    }
+        /* End Lab Styles */

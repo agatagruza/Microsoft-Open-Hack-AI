@@ -1,0 +1,684 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="google-site-verification" content="sj9fqkZubUC8mfA8sFE8UZhdFA7prri8zyJAdXrHqIY" />
+
+        <meta name="description" content="SkillMeUp allows you to learn technology through the tried and true art of doing it yourself. Many people learn exceptionally well watching a video of someone else discussing a subject and others learn better by sitting down and getting your hands-dirty, and that's what we're all about!" />
+        <meta name="keywords" content="Technical Training, On-Demand Labs, Microsoft Azure Training" />
+        <title>SkillMeUp - an Error Occurred!!</title>
+    
+    <link href="/favicon.ico" type="image/x-icon" rel="icon" />
+
+    <link href="/Content/bootstrap/bootstrap-theme.min.css" rel="stylesheet"/>
+<link href="/Content/bootstrap/bootstrap.min.css" rel="stylesheet"/>
+<link href="/Content/jquery/jquery.bxslider.css" rel="stylesheet"/>
+<link href="/Content/bootstrap/bootstrap-social.css" rel="stylesheet"/>
+<link href="/Content/font-awesome/font-awesome.css" rel="stylesheet"/>
+<link href="/Content/jquery/jquery.feedback_me.css" rel="stylesheet"/>
+<link href="/Content/bootstrap/bootstrap-tour-standalone.css" rel="stylesheet"/>
+
+    <link href="/Content/Tenant/smu/style.css" rel="stylesheet"/>
+<link href="/Content/Tenant/smu/ota-styles.css" rel="stylesheet"/>
+<link href="/Content/Tenant/smu/Site.css" rel="stylesheet"/>
+<link href="/Content/Tenant/smu/ops-search-box.min.css" rel="stylesheet"/>
+<link href="/Content/Tenant/smu/ota-elements-styles.css" rel="stylesheet"/>
+<link href="/Content/Tenant/smu/trackCourseDetails-new.css" rel="stylesheet"/>
+<link href="/Content/Tenant/smu/new-styles.css" rel="stylesheet"/>
+
+    <link href="/Content/jquery/jquery.autocompleteInline.css" rel="stylesheet"/>
+
+
+    <!-- Fonts -->
+    <link href='https://fonts.googleapis.com/css?family=Lato:400,300,900,700' rel='stylesheet' type='text/css'>
+    <link href="https://fonts.googleapis.com/css?family=Montserrat:100,200,300,400,600,700,800" rel="stylesheet">
+    <link href="/Content/font-awesome/font-awesome.min.css" rel="stylesheet"/>
+
+    <link rel="shortcut icon" href="/favicon.ico" />
+    
+    <style>
+        #myAccountLink:hover {
+            text-decoration: underline;
+        }
+    </style>
+    
+    <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+    <!-- Include all compiled plugins (below), or include individual files as needed -->
+    <script src="/Scripts/modernizr-2.6.2.js"></script>
+
+    <script src="/Scripts/jquery-3.1.1.min.js"></script>
+<script src="/Scripts/cookies.js"></script>
+<script src="/Scripts/jquery.equalheight.min.js"></script>
+
+    <script src="/Scripts/jquery.feedback_me.js"></script>
+
+    <script src="/Scripts/knockout-3.1.0.js"></script>
+
+    <script src="/Scripts/knockout.validation.js"></script>
+
+    <script src="/Scripts/jquery.validate.js"></script>
+
+    <script src="/Scripts/JoinMail/joinMail.js"></script>
+
+    <script src="/Scripts/Plugins/Theme/ota_theme.js"></script>
+<script src="/Scripts/application.js"></script>
+<script src="/Scripts/makeAjaxRequest.js"></script>
+<script src="/Scripts/cookies.js"></script>
+<script src="/Scripts/Plugins/BlockUi/jquery.blockUI.js"></script>
+
+    <script src="/Scripts/ViewModels/LoginViewModel.js"></script>
+
+    <script src="/Scripts/ViewModels/SubscriptionListViewModel.js"></script>
+
+    <script src="/Scripts/jquery.bxslider.min.js"></script>
+
+    <link href="/Content/Plugins/Eeyellow%20Timeline/css/jquery.eeyellow.Timeline.css" rel="stylesheet"/>
+
+    <script src="/Content/Plugins/Eeyellow%20Timeline/js/jquery.actual.js"></script>
+<script src="/Content/Plugins/Eeyellow%20Timeline/js/jquery.eeyellow.Timeline.js"></script>
+
+    <script src="/Content/Plugins/FullScreen/jquery.fullscreen-min.js"></script>
+
+    <link href="/Content/jquery/jGrowl.css" rel="stylesheet"/>
+
+    <script src="/Scripts/jGrowl.js"></script>
+
+
+    <script type="text/javascript" src="//s7.addthis.com/js/300/addthis_widget.js#pubid=ra-526a481e029c60f9"></script>
+    <script src="/Scripts/jquery.validate.unobtrusive.min.js"></script>
+    <script src="/Scripts/jquery.unobtrusive-ajax.min.js"></script>
+    <script src="/Scripts/jquery.autocompleteInline.js"></script>
+    <script src="/Scripts/jquery-ui.js"></script>
+
+        <!-- Global site tag (gtag.js) - Google Analytics -->
+        <script async src="https://www.googletagmanager.com/gtag/js?id=UA-112496852-1"></script>
+        <script>
+            window.dataLayer = window.dataLayer || [];
+            function gtag() { dataLayer.push(arguments); }
+            gtag('js', new Date());
+
+            gtag('config', 'UA-112496852-1');
+        </script>
+
+    <script type="text/javascript">
+        var appInsights = window.appInsights || function (config) { function r(config) { t[config] = function () { var i = arguments; t.queue.push(function () { t[config].apply(t, i) }) } } var t = { config: config }, u = document, e = window, o = "script", s = u.createElement(o), i, f; for (s.src = config.url || "//az416426.vo.msecnd.net/scripts/a/ai.0.js", u.getElementsByTagName(o)[0].parentNode.appendChild(s), t.cookie = u.cookie, t.queue = [], i = ["Event", "Exception", "Metric", "PageView", "Trace"]; i.length;) r("track" + i.pop()); return r("setAuthenticatedUserContext"), r("clearAuthenticatedUserContext"), config.disableExceptionTracking || (i = "onerror", r("_" + i), f = e[i], e[i] = function (config, r, u, e, o) { var s = f && f(config, r, u, e, o); return s !== !0 && t["_" + i](config, r, u, e, o), s }), t }({ instrumentationKey: "df5db35a-5a45-4e81-92f1-0878ac84e951" });
+        window.appInsights = appInsights;
+    </script>
+
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $("body").on("click", "[login-trigger]", function () {
+                var fpbox = $(".ops-forgot-password-box");
+                if ($(fpbox).hasClass("active")) {
+                   $(fpbox).removeClass("active");
+                    setTimeout(function() {
+                        $("[ops-login-submitbutton]").removeClass("hide");
+                        $("[ops-login-messagearea]").addClass("hide");
+                        $("[ops-login-spinner]").addClass("hide");
+                        $(".ops-login-box").addClass("active");
+                    }, 500);
+                }
+                else {
+                    $("[ops-login-submitbutton]").removeClass("hide");
+                    $("[ops-login-messagearea]").addClass("hide");
+                    $("[ops-login-spinner]").addClass("hide");
+                    $(".ops-login-box").toggleClass("active");
+                }
+            });
+
+            $("body").on("click", "[forgot-password-trigger]", function() {
+                $(".ops-login-box").removeClass("active");
+                $("[ops-forgot-password-submitbutton]").removeClass("hide");
+                $("[ops-forgot-password-messagearea]").addClass("hide");
+                $("[ops-forgot-password-spinner]").addClass("hide");
+
+                setTimeout(function() {
+                    $(".ops-forgot-password-box").addClass("active");
+                }, 500);
+            });
+
+            $("body").on("click", "[login-box-close]", function() {
+                $(".ops-login-box").removeClass("active");
+            });
+
+            $("body").on("click", "[forgot-password-box-close]", function() {
+                $(".ops-forgot-password-box").removeClass("active");
+            });
+
+            $("body").on("click", "[login-sidebar-trigger]", function() {
+                $("#exit").trigger("click");
+                $(".ops-login-box").addClass("active");
+            });
+
+            $("body").on("click", "[search-trigger]", function () {
+                $(".ops-search-box").toggleClass("active");
+            });
+            $("#ops-search-box").on("change", function() {
+                submitSearch();
+            });
+            $(".ops-search-box-addon").on("click", function() {
+                submitSearch();
+            });
+            function submitSearch() {
+                var value = $("#ops-search-box").val();
+                if (value && value.length > 0) {
+                    window.location = "/courses/all?search=" + value + "&selection=AOD";
+                }
+            }
+
+            if ($('#AuthenticatedUserName') && $('#AuthenticatedUserName').val()) {
+                appInsights.setAuthenticatedUserContext($('#AuthenticatedUserName').val());
+            }
+            else {
+                appInsights.clearAuthenticatedUserContext();
+            }
+
+            appInsights.trackPageView();
+
+            opsgility.blockUI("#bodyContent", true);
+            opsgility.ShowLoginPopup();
+            subscriptionListViewModel.loadSubscriptionId();
+
+            $('#loginFormDrop').keypress(function (e) {
+                if (e.which == 13) {
+                    $(this).blur();
+                    $('#signIn').focus().click();
+                    return false;
+                }
+            });
+
+            $('#loginFormPage').keypress(function (e) {
+                if (e.which == 13) {
+                    $(this).blur();
+                    $('#signInPage').focus().click();
+                    return false;
+                }
+            });
+            $('#loginFormPopUp').keypress(function (e) {
+                if (e.which == 13) {
+                    $(this).blur();
+                    $('#signInPopUp').focus().click();
+                    return false;
+                }
+            });
+
+            $('#registrationForm').keypress(function (e) {
+                if (e.which == 13) {
+                    $(this).blur();
+                    $('.signmeUpRegistration').focus().click();
+                    return false;
+                }
+            });
+            function keypressHandler(e) {
+                if (e.which == 13) {
+                    $('#forgetpsw_btn').focus().click();//give your submit an ID
+                }
+            }
+            $('#forgetPasswordForm').keypress(keypressHandler);
+
+            var hasValidSubscription = subscriptionListViewModel.hasValidSubscription();
+            if (!hasValidSubscription) {
+                $("#subscriptionTab").removeClass('hidden');
+                $("#subscriptionTab").show();
+                $("#freeTrialDiv").removeClass('hidden');
+                $("#freeTrialDiv").show();
+            }
+
+            //Pre load images.
+            var baseurl = opsgility.getBaseURL();
+            var my_image = new Image();
+            my_image.src = baseurl + '/content/tenant/smu/Images/login-bg.jpg';
+
+
+            $('#search_form').keydown(function () {
+                if (event.keyCode == 13) {
+                    opsgility.showLoadingIcon('.search--bg');
+                    // As ASCII code for ENTER key is "13"
+                    $('#search_form').submit(); // Submit form code
+                }
+            });
+
+
+        });
+        var config = {
+            contextPath: '/'
+        };
+    </script>
+
+    <!--Catch all client side errors and track to application insight.-->
+    <script type="text/javascript">
+        window.onerror = function (msg, url, linenumber) {
+            var message = msg + ", " + url + ", " + linenumber;
+            appInsights.trackTrace(message);
+        }
+    </script>
+
+    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+        <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+      <![endif]-->
+</head>
+
+<body>
+    <!-- Menu Bar Begin -->
+    <div class="menu-bar">
+        <div class="menu-bar--container">
+            <a href="/" class="menu-bar--logo--openhacks menu-bar-logo-zindex responsive-menu-bar--logo"></a>
+            <ul class="menu-bar--links links openhack-links">
+                        <li><a href="javascript:document.getElementById('logoutForm').submit()" class="menu-bar--link-button menu-bar--link-button">Logout</a></li>
+
+            </ul>
+            
+<script>
+
+    $(document).ready(function () {
+        //Need commented code when subscription dropdown is back.
+
+        //if ($('#mySubscriptions').length) {
+        //    //ko.applyBindings(subscriptionListViewModel, document.getElementById('mySubscriptions'));
+        //    subscriptionListViewModel.loadSubscriptionNameList();
+        //    //subscriptionListViewModel.selectionChanged();
+        //}
+
+        //$('#mySubscriptionsDiv').click(function (e) {
+        //    e.stopPropagation();
+        //});
+
+        //subscriptionListViewModel.loadSubscriptionId();
+    });
+</script>
+
+<div id="mySubscriptionsDiv" data-bind="with: subscriptionListViewModel">
+    <input type="hidden" id="mySubscriptions" data-bind="value:subscriptionListViewModel.currentSubscriptionId()" />
+</div>
+
+
+
+        </div>
+    </div>
+    
+    
+    <div class="menu-spacer"></div>
+
+    <!-- Login Box -->
+    <div class="ops-login-box">
+<div class="row">
+    <div class="col-md-8 col-sm-8 col-xs-8">
+        <div class="ops-login-box-title">Account Login</div>
+    </div>
+    <div class="col-md-4 col-sm-4 col-xs-4">
+        <div class="ops-login-box-close" login-box-close>Close</div>
+    </div>
+    <div class="col-md-12 col-sm-12 col-xs-12">
+        <div class="ops-login-box-separator"></div>
+    </div>
+    <div class="col-md-12 col-sm-12 col-xs-12" style="text-align: right">
+        <div class="ops-login-box-subtitle" forgot-password-trigger>...or click here if you forgot your password</div>
+    </div>
+</div>
+
+<form action="/Account/Login" data-ajax="true" data-ajax-begin="LoginStarted()" data-ajax-method="Post" data-ajax-success="LoginCallback(data)" id="form0" method="post"><input name="__RequestVerificationToken" type="hidden" value="50lUhV9IUWQlWR6SJsuwTQpWIYJsHzUJyKuplO82pSb8kQ5reY7bqcjvZ1a76aJnfcut0pnM_ukFNzSHjDRCu480gC6yxlJvf3X1oROG8V_ed3OJsCFsjpkKW9Q6_pUqbhcwzw3dqPtlU3HJ0P3P7Q2" />    <div class="row">
+        <div class="col-md-12">
+            <div class="form-group">
+                <label for="Email">Email</label>
+                <input class="form-control" data-val="true" data-val-email="The Email field is not a valid e-mail address." data-val-required="The Email field is required." id="Email" name="Email" placeholder="Email address" type="text" value="" />
+                <span class="field-validation-valid" data-valmsg-for="Email" data-valmsg-replace="true"></span>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <div class="form-group">
+                <label for="Password">Password</label>
+                <input class="form-control" data-val="true" data-val-required="The Password field is required." id="Password" name="Password" placeholder="Password" type="password" />
+                <span class="field-validation-valid" data-valmsg-for="Password" data-valmsg-replace="true"></span>
+            </div>
+        </div>
+    </div>
+    <div class="row margin-top-20" ops-login-submitbutton>
+        <div class="col-md-12" style="text-align: center;">
+            <button class="btn btn-primary">Sign In</button>
+        </div>
+    </div>
+    <div class="row margin-top-20 hide" ops-login-spinner>
+        <div class="col-md-12" style="text-align: center;">
+            <span class="fa fa-spinner fa-spin"></span>
+        </div>
+    </div>
+    <div class="row margin-top-20 hide" ops-login-messagearea>
+        <div class="col-md-12" style="text-align: center;">
+            <p>Invalid Login Attempt</p>
+        </div>
+    </div>
+</form>
+    </div>
+    <!-- Login Box End -->
+
+    <!-- Forgot Password Box -->
+    <div class="ops-forgot-password-box">
+<div class="row">
+    <div class="col-md-8 col-sm-8 col-xs-8">
+        <div class="ops-login-box-title">Forgot Password</div>
+    </div>
+    <div class="col-md-4 col-sm-4 col-xs-4">
+        <div class="ops-login-box-close" forgot-password-box-close>Close</div>
+    </div>
+    <div class="col-md-12 col-sm-12 col-xs-12">
+        <div class="ops-login-box-separator"></div>
+    </div>
+</div>
+
+<form action="/Account/NewForgotPassword" data-ajax="true" data-ajax-begin="ForgotPasswordStarted()" data-ajax-method="Post" data-ajax-success="ForgotPasswordCallback(data)" id="form1" method="post"><input name="__RequestVerificationToken" type="hidden" value="SNKrAr5xDw5e00nThXKMvoKUalvuP4YhKiCiOp_fOibj-B0MVxEyQAfX40bB8sKvxn2HzvKDrbCadbvNRsL2mfcsvet1jyvgdSE_iuDci6OmL3dm9CoNqkG-UpEBTsN6yBpSAODvVlpp9p9lWNE9NQ2" />    <div class="row margin-top-20">
+        <div class="col-md-12">
+            <div class="form-group">
+                <label for="Email">Email</label>
+                <input class="form-control" data-val="true" data-val-email="The Email field is not a valid e-mail address." data-val-required="The Email field is required." id="Email" name="Email" placeholder="Email address" type="text" value="" />
+                <span class="field-validation-valid" data-valmsg-for="Email" data-valmsg-replace="true"></span>
+            </div>
+        </div>
+    </div>
+    <div class="row margin-top-20" ops-forgot-password-submitbutton>
+        <div class="col-md-12" style="text-align: center;">
+            <button class="btn btn-primary">Submit</button>
+        </div>
+    </div>
+    <div class="row margin-top-20 hide" ops-forgot-password-spinner>
+        <div class="col-md-12" style="text-align: center;">
+            <span class="fa fa-spinner fa-spin"></span>
+        </div>
+    </div>
+    <div class="row margin-top-20 hide" ops-forgot-password-messagearea>
+        <div class="col-md-12" style="text-align: center;">
+            <p></p>
+        </div>
+    </div>
+</form>
+
+    </div>
+    <!-- Forgot Password Box End -->
+
+    <!-- Search Feature End-->
+    <!-- Course Paths Begin -->
+    
+<form action="/Account/LogOff" class="" id="logoutForm" method="post"><input name="__RequestVerificationToken" type="hidden" value="bfN1WOyWWjTt3EEA5_BJLj9xnQyQEEXMw6YcOLFUbCYfwxhec3efsWCvg7sslUvZhsg9JFBlqeqJOvvc23SFLMmvVvvoYY-CpbPmt93RtBNDPIxEONPaBCA9Rffd3RMmYj4h9E62C2bu0hTZeLqbDw2" /></form>
+    <div id="bodyContent" class="bodyContent">
+        
+
+
+
+<div class="about-textbox" style="padding-bottom: 50px;">
+    <div class="container">
+        <div class="about-textbox-title">
+            Something Happened!
+        </div>
+        <div class="about-textbox-subtitle">
+            Sorry about this.. but something happened that wasn't supposed to!
+        </div>
+    </div>
+</div>
+
+<div class="container" style="margin-top: 50px;margin-bottom: 50px">
+    <div class="col-lg-5 col-lg-offset-1 col-sm-6 col-xs-12">
+        <h4>
+            Our support team has been notified and will review ASAP.
+        </h4>
+        <h5>
+            In the meantime, if you need us you can contact us directly if you need assistance. 
+        </h5>
+    </div>
+    <div class="col-lg-5 col-lg-offset-1 col-sm-6 col-xs-12">
+        <div class="col-lg-12">
+            <div class="relative">
+                <div class="stroke-box  contact-us--box__email">
+                    <div class="contact-us--box-container text-left">
+                        <h3 class="subtitle uppercase"><i class="fa fa-envelope" aria-hidden="true"></i>E-Mail</h3>
+                        <p class="contact--p">support@opsgility.com</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-12">
+            <div class="relative">
+                <div class="stroke-box  contact-us--box__phone">
+                    <div class="contact-us--box-container text-left">
+                        <h3 class="subtitle uppercase"><i class="fa fa-phone" aria-hidden="true"></i>Telephone</h3>
+                        <p class="contact--p text-capitalize">Toll free (US) 866.833.3878</p>
+                        <p class="contact--p text-capitalize">Toll free (UK) +44 (800) 368-7413</p>
+                        <p class="contact--p text-capitalize">All others: 1 (972) 437-8022</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+</div>
+
+
+    </div>
+
+    <div class="col-xs-12 col-sm-12 col-lg-12 no-padding sucessMessageBox" style="display:none;">
+        <div class="alert alert-success alert-dismissable sucessMessageBoxTrue" style="display:none;">
+            <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+            <span><strong id="sucessMessageBoxHeadTrue"></strong></span>
+            <ul>
+                <li id="sucessMessageBoxTextTrue" style="margin-left:18px !important;"></li>
+            </ul>
+        </div>
+        <div class="alert alert-danger alert-dismissable sucessMessageBoxFalse" style="display:none;">
+            <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+            <span><strong id="sucessMessageBoxHeadFlase"></strong></span>
+            <ul>
+                <li id="sucessMessageBoxTextFlase" style="margin-left:18px !important;"></li>
+            </ul>
+        </div>
+    </div>
+
+
+
+    <!-- Main Footer begin -->
+
+    <div class="footer">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-12" style="padding: 50px;">
+                    <div class="row">
+                        
+                        <div class="col-md-12 col-sm-12 col-xs-12">
+                            <div class="footer-copyright pull-Left" style="color: #aaa; margin-top: 12px;"><span class="fa fa-copyright"></span> &copy; Microsoft 2018. All Rights Reserved - Powered By SkillMeUp.com and Opsgility, LLC</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+                
+        </div>
+    </div>
+
+    <!-- Main Footer end -->
+
+
+    <script src="/Scripts/bootstrap.min.js"></script>
+
+    <script src="/Scripts/bootstrap-tour.min.js"></script>
+
+    
+
+    <div class="modal fade" tabindex="-1" role="dialog" id="confirmDialog" aria-labelledby="mySmallModalLabel" aria-hidden="true">
+        <div class="modal-dialog" style="z-index:9999;">
+            <div class="modal-content">
+                <div class="">
+                    <div class="modal-header cancelSubscriptionHead" style="border-bottom: 1px solid #000000;">
+                        <button type="button" class="close popup_cls_btn" data-dismiss="modal"><span aria-hidden="true">×</span><span class="sr-only">Close</span></button>
+                        <h2 class="modal-title" id="confirmation-header">Confirm</h2>
+                    </div>
+                    <div class="modal-body noLeftRightPadding">
+                        <div class="content_bx">
+                            <div class="modal-body">
+                                <h4 id="confirmationMessage">...?</h4>
+                            </div>
+
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <div class="button popupButtonAlign">
+                            <button type="button" class="btn__purple btn-opsgility" data-dismiss="modal">No</button>
+                            <button type="button" class="btn__purple btn-opsgility confirmButton">Yes</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="modal fade bs-example-modal-md" tabindex="-1" role="dialog" id="removeAdminDialog" aria-labelledby="mySmallModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-md" style="z-index:9999;">
+            <div class="modal-content">
+                <div class="">
+                    <div class="modal-header cancelSubscriptionHead" style="border-bottom: 1px solid #000000;">
+                        <button type="button" class="close popup_cls_btn" data-dismiss="modal"><span aria-hidden="true">×</span><span class="sr-only">Close</span></button>
+                        <h2 class="modal-title" id="confirmation-header">Message</h2>
+                    </div>
+                    <div class="container" style="width:100% !important;">
+                        <div class="content_bx">
+                            <div class="modal-body">
+                                <h4 id="confirmationMessage">Subscription needs at least one administrator to manage the account.</h4>
+                            </div>
+                            <div class="modal-footer">
+                                <div class="button popupButtonAlign">
+                                    <button type="button" class="btn__purple btn-opsgility removeAdminOK" data-dismiss="modal">OK</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="modal fade bs-example-modal-md" tabindex="-1" role="dialog" id="singleConfirmDialog" aria-labelledby="mySmallModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-md" style="z-index:9999;">
+            <div class="modal-content">
+                <div class="">
+                    <div class="modal-header cancelSubscriptionHead" style="border-bottom: 1px solid #000000;">
+                        <button type="button" class="close lg_closebtn" data-dismiss="modal"><span aria-hidden="true">×</span><span class="sr-only">Close</span></button>
+                        <h2 class="modal-title" id="singleConfirmation-header">Confirm</h2>
+                    </div>
+                    <div class="modal-body">
+                        <h4 id="confirmationMessage">...?</h4>
+                    </div>
+                    <div class="modal-footer">
+                        <div class="button popupButtonAlign">
+                            <button type="button" class="btn__purple" data-dismiss="modal">OK</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade bs-example-modal-md" tabindex="-1" role="dialog" id="setCoursePlanPop" aria-labelledby="mySmallModalLabel" aria-hidden="true" style="z-index:9999;">
+        <div class="modal-dialog modal-sm" style="z-index:9999;">
+            <div class="modal-content">
+                <div class="">
+                    <div class="modal-header cancelSubscriptionHead" style="border-bottom: 1px solid #000000;">
+                        <button type="button" class="close popup_btn" data-dismiss="modal"><span aria-hidden="true">×</span><span class="sr-only">Close</span></button>
+                        <h2 class="modal-title" id="setCoursePlanPop-header">ADD TO COURSE PLAN</h2>
+                    </div>
+                    <div class="container no_padding" style="width:100% !important;">
+                        <div class="content_bx">
+                            <div class="modal-body">
+                                <div class="col-sm-6 no_padding">
+                                    <h4 id="confirmationMessage">Goal Completion Date</h4>
+                                    
+                                    <input type="date" id="goalDate" class="ota-datepicker" min="2019-01-13" value="2019-01-13" style="margin-bottom: 5px;"/>
+                                    <span class="field-validation-error hide" id="goalDateValidation">The Goal Completition Date is not valid</span>
+                                </div>
+                            </div>
+                            <div class="clearfix"></div>
+                            <div class="modal-footer">
+                                <div class="button popupButtonAlign">
+                                    <button type="button" class="btn__purple btnSaveGoalDate popup_btn" id="btnSaveGoalDate">Save</button>
+                                    <button type="button" class="btn__purple btnCancelGoalDate popup_btn" data-dismiss="modal">Cancel</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade " tabindex="-1" role="dialog" id="accountConformation" aria-labelledby="mySmallModalLabel" aria-hidden="true" style="z-index:9999;">
+        <div class="modal-dialog" style="z-index:9999;">
+            <button type="button" class="close lg_closebtn" data-dismiss="modal" style="font-size:33px;z-index: 9999;"><span aria-hidden="true">×</span><span class="sr-only">Close</span></button>
+            <div class="modal-content">
+                <div class="">
+                    <div class="modal-header heading-background" style="border-bottom: 1px solid #000000;">
+                        <h3 class="modal-title" id="confirmation-header">Account Confirmation</h3>
+                    </div>
+                    <div class="modal-body">
+                        <h4 id="confirmationMessage">Your account has been successfully created!</h4>
+
+
+
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn__purple largeFont" data-dismiss="modal">OK<span class="sr-only">Close</span></button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <script>
+        $(function () {
+            $('[data-toggle="tooltip"]').tooltip();
+        });
+
+        function LoginStarted() {
+            $("[ops-login-submitbutton]").addClass("hide");
+            $("[ops-login-messagearea]").addClass("hide");
+            $("[ops-login-spinner]").removeClass("hide");
+        }
+
+        function LoginCallback(data) {
+            if (data.IsSuccess == true) {
+                $(".ops-login-box").removeClass("active");
+                setTimeout(function () {
+                    location.reload();
+                }, 500)
+            }
+            else {
+                $("[ops-login-submitbutton]").removeClass("hide");
+                $("[ops-login-messagearea]").removeClass("hide");
+                $("[ops-login-spinner]").addClass("hide");
+            }
+        }
+
+        function ForgotPasswordStarted() {
+            $("[ops-forgot-password-submitbutton]").addClass("hide");
+            $("[ops-forgot-password-messagearea]").addClass("hide");
+            $("[ops-forgot-password-spinner]").removeClass("hide");
+        }
+
+        function ForgotPasswordCallback(data) {
+            $("[ops-forgot-password-submitbutton]").addClass("hide");
+            $("[ops-forgot-password-messagearea]").removeClass("hide");
+            $("p", $("[ops-forgot-password-messagearea]")).html(data.Message);
+            $("[ops-forgot-password-spinner]").addClass("hide");
+        }
+
+    </script>
+
+
+    
+</body>
+</html>

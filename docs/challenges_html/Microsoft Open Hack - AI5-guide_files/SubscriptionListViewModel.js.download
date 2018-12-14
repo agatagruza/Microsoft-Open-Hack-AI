@@ -1,0 +1,61 @@
+﻿var subscriptionListViewModel = {
+    SubscriptionNames: ko.observableArray([]),
+    currentSubscription: ko.observable(),
+    currentSubscriptionId: ko.observable(),
+    hasValidSubscription: ko.observable(false),
+
+    loadSubscriptionNameList: function () {
+        var SubNameListVM = this;
+        ajaxRequest.makeAPIRequest("/Subscription/GetCurrentSubscriptions", "GET", null, function (result) {
+            SubNameListVM.SubscriptionNames(result);
+            if (result.length > 0) {
+                // If a subscription was already selected, set the same from cookie
+                var selectedSubscription = $.getCookie('CurrentSubscriptionToken');
+                if (!selectedSubscription) {
+                    selectedSubscription = result[0];
+                }
+                
+                subscriptionListViewModel.currentSubscription(selectedSubscription.Subscription);
+                opsgility.changeSubscriptionDropDownWidth();
+            }
+            else {
+                $.deleteCookie("CurrentSubscriptionToken");
+            }
+        });
+    },
+    
+    selectionChanged: function () {
+        var selectedsubscription = $('#mySubscriptions').val();
+        var previouslySelected = $.getCookie('CurrentSubscriptionToken');
+
+        if (selectedsubscription != previouslySelected) {
+            $.deleteCookie("OpsgilityAccessToken");
+            $.setCookie("CurrentSubscriptionToken", selectedsubscription, 1);
+        }
+
+        opsgility.changeSubscriptionDropDownWidth();
+    },
+
+    loadSubscriptionId: function () {
+        var SubIdVM = this;
+        ajaxRequest.makeAPIRequest("/Subscription/GetCurrentSubscriptionId", "GET", null, function (result) {
+            if (result!= 0) {
+                SubIdVM.currentSubscriptionId(result);
+                //check whether the user have a valid subscription.
+                if(result>0)
+                {
+                    subscriptionListViewModel.hasValidSubscription(true);
+                }
+            }
+        },null,null,false,false);
+    },
+    attachEvents: function () {
+        $('body').off('click', '.homecertificate');
+        $('body').on('click', '.homecertificate', function () {
+            var id = $(this).attr('certificateId');
+            var baseurl = opsgility.getBaseURL();
+            window.location.href = baseurl + "/courses/bypath/" + id;
+        });
+    },
+};
+

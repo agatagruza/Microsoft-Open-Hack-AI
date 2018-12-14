@@ -1,0 +1,166 @@
+﻿body .contact_us h1 {
+  float: left;
+  margin: 0;
+  width: 100%;
+  font-family: "Myriad Pro";
+  font-size: 26px;
+  color: #fff;
+  padding: 15px;
+  text-align: left;
+  background-color: #00abec;
+  font-weight: bold;
+}
+body .doted_line {
+  border-bottom: 1px dashed #027df9;
+  float: left;
+  width: 100%;
+}
+body .contact_us_content {
+  float: left;
+  width: 100%;
+  background-color: #f2f2f2;
+  border: 1px solid #00abec;
+}
+body .ota-html-desc {
+  padding: 15px;
+  font-size: 14px;
+  letter-spacing: 1px;
+  line-height: 30px;
+  color: #8da0af;
+  font-family: "Montserrat", sans-serif;
+}
+body .ota-html-desc li {
+  padding: 15px;
+  font-size: 14px;
+  letter-spacing: 1px;
+  line-height: 30px;
+  color: #8da0af;
+  font-family: "Montserrat", sans-serif;
+}
+body .panel-group .panel {
+  position: relative;
+  border-radius: 0 !important;
+  border-width: 0 !important;
+}
+body .panel-group .panel .panel-heading {
+  border-radius: 0 !important;
+  border-width: 0 !important;
+  padding: 20px;
+  background-color: #00395f !important;
+  background-image: none !important;
+}
+body .panel-group .panel .panel-heading .panel-title {
+  font-size: 16px;
+  letter-spacing: 1px;
+  line-height: 18px;
+  color: #ffffff;
+  font-family: "Montserrat", sans-serif;
+  font-weight: bold;
+  background-color: #00395f !important;
+}
+body .panel-group .panel .panel-heading .panel-title a {
+  position: absolute;
+  right: 0;
+  top: 0;
+  padding: 20px;
+  background-color: #ff9b00;
+  cursor: pointer;
+  color: white !important;
+}
+body .panel-group .panel .panel-collapse {
+  padding: 30px !important;
+}
+body .panel-group .panel .panel-collapse .course-subtitle {
+  padding-left: 10px;
+}
+body .panel-group .panel .panel-collapse .panel-collapse-content {
+  padding: 30px !important;
+}
+body .panel-group .panel .panel-collapse .panel-collapse-content ul {
+  list-style-type: none;
+}
+body .panel-group .panel .panel-collapse .panel-collapse-content ul li {
+  font-size: 14px;
+  letter-spacing: 1px;
+  line-height: 30px;
+  color: #8da0af;
+  font-family: "Montserrat", sans-serif;
+  position: relative;
+}
+body .panel-group .panel .panel-collapse .panel-collapse-content ul li:before {
+  content: '';
+  position: absolute;
+  top: 10px;
+  left: -25px;
+  width: 10px;
+  height: 10px;
+  border-radius: 5px;
+  background-color: #27cbff;
+}
+body .panel-group .panel .panel-collapse .panel-collapse-content .text-brand-blue {
+  font-size: 16px !important;
+  letter-spacing: 1px;
+  color: #32ceff;
+  font-family: "Montserrat", sans-serif;
+  font-weight: 400;
+  line-height: 20px;
+  margin-bottom: 0;
+}
+body .panel-group .panel .panel-collapse .panel-collapse-content .text-brand-blue p {
+  font-size: 16px !important;
+}
+body .panel-group .panel .panel-collapse .panel-collapse-content .ota-html-desc {
+  font-size: 14px !important;
+  letter-spacing: 1px;
+  color: #8da0af;
+  font-family: "Montserrat", sans-serif;
+  font-weight: 400;
+}
+body .panel-group .panel .panel-collapse .panel-collapse-content .ota-html-desc p {
+  font-size: 14px !important;
+}
+body .course-title {
+  font-size: 24px;
+  font-family: 'Montserrat', sans-serif;
+  font-weight: bold;
+  color: #10617b;
+}
+body .course-subtitle {
+  font-size: 18px;
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 400 !important;
+  color: #27cbff;
+}
+body .course-text {
+  font-size: 15px;
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 400 !important;
+  color: #8da0af;
+}
+body .courseDetailList {
+  list-style-type: none;
+}
+body .courseDetailList li {
+  font-size: 14px;
+  letter-spacing: 1px;
+  line-height: 30px;
+  color: #8da0af;
+  font-family: "Montserrat", sans-serif;
+  position: relative;
+}
+body .courseDetailList li:before {
+  content: '';
+  position: absolute;
+  top: 10px;
+  left: -25px;
+  width: 10px;
+  height: 10px;
+  border-radius: 5px;
+  background-color: #27cbff;
+}
+body .side-offer {
+  font-size: 15px;
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 400 !important;
+  color: #8da0af;
+}

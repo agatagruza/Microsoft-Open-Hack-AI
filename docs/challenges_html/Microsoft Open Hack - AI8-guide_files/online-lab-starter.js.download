@@ -1,0 +1,207 @@
+﻿var onlineLabStarter = {
+    initiateOnlineLab: function(courseId, moduleId) {
+        $("body").off("credits-purchase-finished");
+        onlineLabStarter.courseId = courseId;
+        onlineLabStarter.moduleId = moduleId;
+        var params = {
+            courseId: courseId,
+            moduleId: moduleId
+        };
+        ajaxRequest.makeAPIRequest("/Course/CheckSubscriptionAvailability?courseId=" + courseId + "&moduleId=" + moduleId, "get", params, 
+            function(result) {
+                if (result === true) {
+                    ajaxRequest.makeAPIRequest("/Course/GetUserCreditBalanceForLab", "get", params, 
+                        function(creditResult) {
+                            if (creditResult.Success) {
+                                $("#labCreditCost").html(creditResult.CreditCost);
+                                var content = "";
+                                $.each(creditResult.PaymentOptions, function() {
+                                    content += "<option value='" + this.SubscriptionId + "'>" + this.SubscriptionName + " (" + this.Credits + " credits )" + "</option>";
+                                });
+                                $("#lab-credits-source").html(content);
+                                $("#btnModalStartOnlineLab").removeAttr("disabled");
+                                $('#modalEnoughCredits').modal('show');
+                            }
+                            else {
+                                if (creditResult.NoCredits) {
+                                    $("#userCredits").html(creditResult.UserCredits);
+                                    $("#labCredits").html(creditResult.CreditCost);
+                                    $("#creditDifference").html(creditResult.CreditsNeeded);
+                                    $("#creditDifferenceSum").html(creditResult.CreditsNeeded);
+                                    $('#modalNotEnoughCredits').modal('show');
+                                    $('#purchase-amount').val(creditResult.CreditsNeeded);
+                                    onlineLabStarter.creditCost = creditResult.CreditCost;
+                                }
+                                else {
+                                    $('#modalSubscriptionUnavailable').modal('show');
+                                }
+                            }
+                        });
+                }
+                else {
+                    $('#modalStartOnlineLab').modal('hide');
+                    $('#modalSubscriptionUnavailable').modal('show');
+                }
+            })
+    },
+    startOnlineLab: function(subscriptionId, region) {
+        var params = {
+            courseId: onlineLabStarter.courseId,
+            moduleId: onlineLabStarter.moduleId,
+            paymentSubscriptionId: subscriptionId,
+            region: onlineLabStarter.region
+        }
+        onlineLabStarter.PaymentSubscriptionId = subscriptionId;
+        ajaxRequest.makeAPIRequest('/Course/StartOnlineLab', 'get', params,
+            function (result) {
+                $("#modalEnoughCredits").modal('hide');
+                if (result.Success) {
+                    $('#modalOnlineLabStarted').modal('show');
+                    $("body").trigger("online-lab-started", params);
+                 } else {
+                    if (result.NoCredits) {
+                        $("#userCredits").html(result.UserCredits);
+                        $("#labCredits").html(result.CreditCost);
+                        $("#creditDifference").html(result.CreditsNeeded);
+                        $("#creditDifferenceSum").html(result.CreditsNeeded);
+                        $('#modalNotEnoughCredits').modal('show');
+                        $('#purchase-amount').val(result.CreditsNeeded);
+                    }
+                    else {
+                        $('#spanOnlineErrorMessage').html(result.ErrorMessage || 'An error has occurred. Ensure you have enough credits, and please try again.');
+                        $('#modalOnlineLabError').modal('show');
+                    }
+                }
+        });
+    },
+    initiateEndOnlineLab: function(courseId, moduleId) {
+        $('#endLabCourseId').val(courseId);
+        $('#endLabModuleId').val(moduleId);
+        $('#modalEndOnlineLab').modal('show');
+    },
+    endOnlineLab: function(courseId, moduleId) {
+        var params = {
+            courseId: courseId,
+            moduleId: moduleId
+        };
+        ajaxRequest.makeAPIRequest('/Course/EndUserLabEnvironment', 'get', params,
+            function(result) {
+                if(result.Success) {
+                    $('#modalEndOnlineLabSuccess').modal('show');
+                    $("body").trigger("online-lab-ended");
+                } else {
+                    $('#spanEndOnlineLabErrorMessage').html(result.ErrorMessage || 'Could not end lab early. Your lab will still end at its regularly scheduled time.');
+                    $('#modalEndOnlineLabError').modal('show');
+                }
+            }
+        );
+    },
+    courseId: null,
+    moduleId: null,
+    creditCost: null,
+    region: null,
+    attachEvents: function() {
+        $("body").on("click", "#btnModalStartOnlineLab", function () {
+            $(this).attr("disabled", "disabled");
+            var subscriptionId = $("#lab-credits-source").val();
+            onlineLabStarter.region = $("#region-source").val();
+            onlineLabStarter.startOnlineLab(subscriptionId);
+        });
+
+        $("body").on("click", "#btnModalEndOnlineLab", function () {
+            var courseId = $('#endLabCourseId').val();
+            var moduleId = $('#endLabModuleId').val();
+            onlineLabStarter.endOnlineLab(courseId, moduleId);
+            $('#endLabCourseId').val('');
+            $('#endLabModuleId').val('');
+            $('#modalEndOnlineLab').modal('hide');
+        });
+
+        $("body").on("click", "#purchase-more-credits", function() {
+            $("#modalNotEnoughCredits").modal("hide");
+            $("#labCreditsPurchase").modal("show");
+            $("body").on("credits-purchase-finished", function (e, data) {
+                $("#labCreditsPurchase").modal("hide");
+                if (data >= onlineLabStarter.creditCost) {
+                    onlineLabStarter.region = $("#region-source").val();
+                    onlineLabStarter.startOnlineLab(0);
+                }
+                else {
+                    $("#userCredits").html(data);
+                    $("#labCredits").html(onlineLabStarter.creditCost);
+                    $("#creditDifference").html(onlineLabStarter.creditCost - data);
+                    $("#creditDifferenceSum").html(onlineLabStarter.creditCost - data);
+                    $('#modalNotEnoughCredits').modal('show');
+                    $('#purchase-amount').val(onlineLabStarter.creditCost - data);
+                }
+                $("body").off("credits-purchase-finished");
+            });
+        });
+
+        $("body").on("click", "#got-voucher", function () {
+            $("#modalEnoughCredits").modal("hide");
+            $("#voucher-edit").val("");
+            $("#voucher-messagearea").html("");
+            $("#voucher-validation").addClass("hide");
+            $("#modalReclaimVoucher").modal("show");
+        });
+
+        $("body").on("click", "#got-voucher2", function () {
+            $("#modalNotEnoughCredits").modal("hide");
+            $("#voucher-edit").val("");
+            $("#voucher-messagearea").html("");
+            $("#voucher-validation").addClass("hide");
+            $("#modalReclaimVoucher").modal("show");
+        });
+
+        $("body").on("keyup", "#voucher-edit", function() {
+            validateVoucher();
+        });
+
+        $("body").on("click", "#reclaim-voucher", function() {
+            if (validateVoucher() == false) {
+                return;
+            }
+            var voucher = $("#voucher-edit").val();
+            var button = this;
+            $(button).attr("disabled", "disabled");
+            $.post("/Course/ReclaimVoucher?voucher=" + voucher).done(function(data) {
+                var response = parseInt(data);
+                if (response > 0) {
+                    $("#modalReclaimVoucher").modal("hide");
+                    opsgility.showMessageNotification("Voucher Reclaim", response + " credits were added to your account", true);
+                    $(button).removeAttr("disabled");
+                    onlineLabStarter.initiateOnlineLab(onlineLabStarter.courseId, onlineLabStarter.moduleId);
+                }
+                else {
+                    switch (response) {
+                        default:
+                        case 0: $("#voucher-messagearea").html("There was an error allocating the lab credits to your account");
+                            break;
+                        case -1: $("#voucher-messagearea").html("The voucher code provided is invalid");
+                            break;
+                        case -2: $("#voucher-messagearea").html("The voucher code provided has already expired");
+                            break;
+                        case -3: $("#voucher-messagearea").html("You have already claimed this voucher");
+                            break;
+                        case -4: $("#voucher-messagearea").html("This voucher already reached the maximum number of reclaims allowed");
+                            break;
+                    }
+                    $(button).removeAttr("disabled");
+                }
+            });
+        });
+    }
+}
+
+function validateVoucher() {
+    var voucher = $("#voucher-edit").val();
+    if (voucher && voucher.length > 0) {
+        $("#voucher-validation").addClass("hide");
+        return true;
+    }
+    else {
+        $("#voucher-validation").removeClass("hide");
+        return false;
+    }
+}
