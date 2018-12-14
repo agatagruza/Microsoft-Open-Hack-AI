@@ -1,5 +1,12 @@
 # Microsoft Open Hack - AI
 
+## About OpenHack Machine Learning 
+Three days of fun-filled, hands-on hacking where participants team up with colleagues, industry peers, and Microsoft experts to tackle scenarios influenced by common, real-world problems using Microsoft platform capabilities and other industry leading technologies. OpenHack Machine Learning event focuses on problems in the computer vision space and allows developers to leverage Python image processing libraries as well as machine learning frameworks such as Scikit-Learn, CNTK or TensorFlow. During OpenHack participants have the opportunity to:
+- Hack on challenges designed to leave participant with the skills and expertise needed to deploy solution.
+- Network with fellow industry peers and other professional developers from large enterprises as well as Microsoft engineers. 
+- Get answers to technology and workplace project questions from Microsoft and industry experts. 
+- Take advantage of the limited number of 1-hour envisioning sessions to work side-by-side with Microsoft experts on specific to participant own workplace projects. These sessions are available on a first come, first served basis. 
+
 ## Computer Vision OpenHack
 Hello and welcome to Microsoft OpenHack, a challenge oriented hack event. This experience will be presented as a series of challenges, each one adding a new level of depth and complexity to a machine learning solution for computer vision.
 
